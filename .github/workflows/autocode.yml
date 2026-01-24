@@ -1,0 +1,331 @@
+name: Autonomous Dev Loop
+
+on:
+  # Trigger when PR merges to main
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.github/workflows/**'
+  
+  # Manual trigger for initial start or resume
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'next-task'
+        type: choice
+        options:
+          - next-task
+          - qa-review
+          - reset-counter
+          - pause
+          - resume
+
+# Prevent concurrent runs
+concurrency:
+  group: dev-loop
+  cancel-in-progress: false
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    
+    outputs:
+      should_continue: ${{ steps.check-state.outputs.should_continue }}
+      trigger_qa: ${{ steps.check-state.outputs.trigger_qa }}
+    
+    steps:
+      # ─────────────────────────────────────────────────────────
+      # Step 1: Checkout and load state
+      # ─────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Load or initialise loop state
+        id: load-state
+        run: |
+          STATE_FILE=".meta/loop-state.json"
+          
+          # Create default state if missing
+          if [ ! -f "$STATE_FILE" ]; then
+            mkdir -p .meta
+            echo '{
+              "iteration": 0,
+              "qa_interval": 5,
+              "last_task_completed": null,
+              "last_run": null,
+              "consecutive_failures": 0,
+              "max_consecutive_failures": 3,
+              "paused": false
+            }' > "$STATE_FILE"
+          fi
+          
+          # Load state into outputs
+          cat "$STATE_FILE"
+          echo "state=$(cat $STATE_FILE | jq -c .)" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─────────────────────────────────────────────────────────
+      # Step 2: Handle manual actions
+      # ─────────────────────────────────────────────────────────
+      - name: Handle manual action
+        if: github.event_name == 'workflow_dispatch'
+        id: manual-action
+        run: |
+          STATE_FILE=".meta/loop-state.json"
+          ACTION="${{ github.event.inputs.action }}"
+          
+          case "$ACTION" in
+            pause)
+              jq '.paused = true' "$STATE_FILE" > tmp.json && mv tmp.json "$STATE_FILE"
+              echo "Loop paused"
+              echo "should_exit=true" >> $GITHUB_OUTPUT
+              ;;
+            resume)
+              jq '.paused = false' "$STATE_FILE" > tmp.json && mv tmp.json "$STATE_FILE"
+              echo "Loop resumed"
+              echo "should_exit=false" >> $GITHUB_OUTPUT
+              ;;
+            reset-counter)
+              jq '.iteration = 0 | .consecutive_failures = 0' "$STATE_FILE" > tmp.json && mv tmp.json "$STATE_FILE"
+              echo "Counter reset"
+              echo "should_exit=false" >> $GITHUB_OUTPUT
+              ;;
+            qa-review)
+              echo "force_qa=true" >> $GITHUB_OUTPUT
+              echo "should_exit=false" >> $GITHUB_OUTPUT
+              ;;
+            next-task)
+              echo "should_exit=false" >> $GITHUB_OUTPUT
+              ;;
+          esac
+          
+          # Commit state changes
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$STATE_FILE"
+          git diff --staged --quiet || git commit -m "chore: update loop state ($ACTION)"
+          git push || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─────────────────────────────────────────────────────────
+      # Step 3: Check if loop should continue
+      # ─────────────────────────────────────────────────────────
+      - name: Evaluate loop state
+        id: check-state
+        run: |
+          STATE_FILE=".meta/loop-state.json"
+          
+          PAUSED=$(jq -r '.paused' "$STATE_FILE")
+          ITERATION=$(jq -r '.iteration' "$STATE_FILE")
+          QA_INTERVAL=$(jq -r '.qa_interval' "$STATE_FILE")
+          FAILURES=$(jq -r '.consecutive_failures' "$STATE_FILE")
+          MAX_FAILURES=$(jq -r '.max_consecutive_failures' "$STATE_FILE")
+          FORCE_QA="${{ steps.manual-action.outputs.force_qa }}"
+          
+          echo "Current iteration: $ITERATION"
+          echo "QA interval: $QA_INTERVAL"
+          echo "Consecutive failures: $FAILURES"
+          echo "Paused: $PAUSED"
+          
+          # Check circuit breakers
+          if [ "$PAUSED" = "true" ]; then
+            echo "::warning::Loop is paused"
+            echo "should_continue=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          if [ "$FAILURES" -ge "$MAX_FAILURES" ]; then
+            echo "::error::Max consecutive failures reached ($FAILURES)"
+            echo "should_continue=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Check if QA cycle
+          if [ "$FORCE_QA" = "true" ] || [ $((ITERATION % QA_INTERVAL)) -eq 0 ] && [ "$ITERATION" -gt 0 ]; then
+            echo "trigger_qa=true" >> $GITHUB_OUTPUT
+          else
+            echo "trigger_qa=false" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "should_continue=true" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─────────────────────────────────────────────────────────
+      # Step 4: Check for remaining tasks
+      # ─────────────────────────────────────────────────────────
+      - name: Check for incomplete tasks
+        id: check-tasks
+        if: steps.check-state.outputs.should_continue == 'true'
+        run: |
+          TASKS_FILE="TASKS.md"
+          
+          if [ ! -f "$TASKS_FILE" ]; then
+            echo "::error::TASKS.md not found"
+            echo "has_tasks=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Count incomplete tasks (lines with "- [ ]")
+          INCOMPLETE=$(grep -c "^\- \[ \]" "$TASKS_FILE" || echo "0")
+          
+          echo "Incomplete tasks: $INCOMPLETE"
+          
+          if [ "$INCOMPLETE" -eq 0 ]; then
+            echo "::notice::All tasks complete!"
+            echo "has_tasks=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_tasks=true" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─────────────────────────────────────────────────────────
+      # Step 5: Increment counter and commit
+      # ─────────────────────────────────────────────────────────
+      - name: Update iteration counter
+        if: |
+          steps.check-state.outputs.should_continue == 'true' && 
+          steps.check-tasks.outputs.has_tasks == 'true'
+        run: |
+          STATE_FILE=".meta/loop-state.json"
+          
+          # Increment iteration
+          jq '.iteration += 1 | .last_run = now | .last_run |= todate' "$STATE_FILE" > tmp.json
+          mv tmp.json "$STATE_FILE"
+          
+          NEW_ITERATION=$(jq -r '.iteration' "$STATE_FILE")
+          echo "Updated to iteration: $NEW_ITERATION"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$STATE_FILE"
+          git diff --staged --quiet || git commit -m "chore: increment loop iteration to $NEW_ITERATION"
+          git push
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ─────────────────────────────────────────────────────────────
+  # Job: Trigger QA Review
+  # ─────────────────────────────────────────────────────────────
+  trigger-qa:
+    needs: orchestrate
+    if: |
+      needs.orchestrate.outputs.should_continue == 'true' && 
+      needs.orchestrate.outputs.trigger_qa == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    
+    steps:
+      - name: Create QA review issue
+        run: |
+          gh issue create \
+            --repo ${{ github.repository }} \
+            --title "🔍 QA Review Cycle - $(date +%Y-%m-%d)" \
+            --label "copilot-qa-review" \
+            --body "@github-copilot Please perform a quality assurance review of the project.
+
+          ## Review Tasks
+
+          1. **Review TASKS.md** - Check all tasks marked complete actually meet their acceptance criteria
+          2. **Run test suite** - Execute all tests and report any failures
+          3. **Code quality check** - Look for obvious bugs, security issues, or code smells in recent changes
+          4. **Documentation check** - Ensure docs match current implementation
+
+          ## Actions Required
+
+          If issues are found:
+          - Update TASKS.md to mark failed tasks with \`[!]\` status
+          - Add new remedial tasks if needed
+          - Create a summary comment on this issue
+
+          If all checks pass:
+          - Comment 'QA PASSED' on this issue
+          - Close this issue
+
+          ## Reference Files
+          - Task list: TASKS.md
+          - Loop state: .meta/loop-state.json"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ─────────────────────────────────────────────────────────────
+  # Job: Trigger Next Task
+  # ─────────────────────────────────────────────────────────────
+  trigger-next-task:
+    needs: orchestrate
+    if: |
+      needs.orchestrate.outputs.should_continue == 'true' && 
+      needs.orchestrate.outputs.trigger_qa == 'false'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    
+    steps:
+      - name: Create next task issue
+        run: |
+          gh issue create \
+            --repo ${{ github.repository }} \
+            --title "🔄 Dev Loop Task - $(date +%Y-%m-%d-%H%M)" \
+            --label "copilot-dev-task" \
+            --body "@github-copilot Please complete the next task in the development queue.
+
+          ## Instructions
+
+          1. **Read TASKS.md** - Find the first task with \`- [ ]\` (incomplete) status
+          2. **Implement the task** - Follow the description and acceptance criteria exactly
+          3. **Update documentation** - If your changes affect docs, update them
+          4. **Mark task complete** - Change \`- [ ]\` to \`- [x]\` in TASKS.md
+          5. **Create a PR** - Push your changes with a clear commit message
+
+          ## Important Rules
+
+          - Only work on ONE task per PR
+          - Ensure all tests pass before pushing
+          - If you encounter a blocker, mark the task as \`- [!]\` and explain in TASKS.md
+          - Do not modify .meta/loop-state.json
+
+          ## Reference Files
+          - Task list: TASKS.md
+          - Loop state: .meta/loop-state.json (read-only)"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ─────────────────────────────────────────────────────────────
+  # Job: All Tasks Complete
+  # ─────────────────────────────────────────────────────────────
+  notify-complete:
+    needs: orchestrate
+    if: needs.orchestrate.outputs.should_continue == 'false'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    
+    steps:
+      - name: Create completion notice
+        run: |
+          gh issue create \
+            --repo ${{ github.repository }} \
+            --title "✅ Dev Loop Complete or Paused" \
+            --label "copilot-loop-status" \
+            --body "The autonomous development loop has stopped.
+
+          ## Possible Reasons
+          - All tasks complete
+          - Loop manually paused
+          - Max consecutive failures reached
+
+          ## To Resume
+          Run the workflow manually with 'resume' action, or check .meta/loop-state.json for details."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
