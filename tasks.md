@@ -315,7 +315,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 5: Database Connection
 
 ### 5.1 Create Database singleton class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement database connection manager
 - **Acceptance criteria:**
   - Returns single PDO instance
@@ -323,7 +323,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Database.php`
 
 ### 5.2 Configure PDO connection
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Set up SQLite connection options
 - **Acceptance criteria:**
   - Uses PDO with SQLite driver
@@ -331,7 +331,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Database.php`
 
 ### 5.3 Enable foreign key enforcement
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Configure SQLite foreign key support
 - **Acceptance criteria:**
   - Runs PRAGMA foreign_keys = ON
@@ -339,7 +339,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Database.php`
 
 ### 5.4 Implement migration runner
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Create method to execute SQL migrations
 - **Acceptance criteria:**
   - Reads SQL files from database directory
@@ -348,7 +348,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Database.php`
 
 ### 5.5 Add query logging
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Log queries in development mode
 - **Acceptance criteria:**
   - Logs query string
@@ -357,7 +357,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Database.php`
 
 ### 5.6 Create database backup utility
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement database file backup
 - **Acceptance criteria:**
   - Copies database file to timestamped backup
