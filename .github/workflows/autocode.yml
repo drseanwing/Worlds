@@ -37,6 +37,7 @@ jobs:
     outputs:
       should_continue: ${{ steps.check-state.outputs.should_continue }}
       trigger_qa: ${{ steps.check-state.outputs.trigger_qa }}
+      has_tasks: ${{ steps.check-tasks.outputs.has_tasks }}
     
     steps:
       # ─────────────────────────────────────────────────────────
@@ -150,7 +151,7 @@ jobs:
           fi
           
           # Check if QA cycle
-          if [ "$FORCE_QA" = "true" ] || [ $((ITERATION % QA_INTERVAL)) -eq 0 ] && [ "$ITERATION" -gt 0 ]; then
+          if [ "$FORCE_QA" = "true" ] || ([ $((ITERATION % QA_INTERVAL)) -eq 0 ] && [ "$ITERATION" -gt 0 ]); then
             echo "trigger_qa=true" >> $GITHUB_OUTPUT
           else
             echo "trigger_qa=false" >> $GITHUB_OUTPUT
@@ -167,16 +168,16 @@ jobs:
         id: check-tasks
         if: steps.check-state.outputs.should_continue == 'true'
         run: |
-          tasks_FILE="tasks.md"
+          TASKS_FILE="tasks.md"
           
-          if [ ! -f "$tasks_FILE" ]; then
+          if [ ! -f "$TASKS_FILE" ]; then
             echo "::error::tasks.md not found"
             echo "has_tasks=false" >> $GITHUB_OUTPUT
             exit 0
           fi
           
           # Count incomplete tasks (lines with "- [ ]")
-          INCOMPLETE=$(grep -c "^\- \[ \]" "$tasks_FILE" || echo "0")
+          INCOMPLETE=$(grep -c "^\- \[ \]" "$TASKS_FILE" || echo "0")
           
           echo "Incomplete tasks: $INCOMPLETE"
           
@@ -227,14 +228,55 @@ jobs:
       issues: write
     
     steps:
-      - name: Create QA review issue
+      - name: Get Copilot Bot ID
+        id: get-copilot-id
         run: |
-          gh issue create \
-            --repo ${{ github.repository }} \
-            --title "🔍 QA Review Cycle - $(date +%Y-%m-%d)" \
-            --label "copilot-qa-review" \
-            --assignee "copilot-swe-agent[bot]" \
-            --body "@github-copilot Please perform a quality assurance review of the project.
+          OWNER="${{ github.repository_owner }}"
+          REPO="${{ github.event.repository.name }}"
+          
+          response=$(gh api graphql -f query="
+            query {
+              repository(owner: \"$OWNER\", name: \"$REPO\") {
+                suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
+                  nodes {
+                    login
+                    __typename
+                    ... on Bot { id }
+                  }
+                }
+              }
+            }
+          ")
+          
+          copilot_id=$(echo "$response" | jq -r '.data.repository.suggestedActors.nodes[] | select(.login == "copilot-swe-agent") | .id')
+          
+          if [ -z "$copilot_id" ] || [ "$copilot_id" = "null" ]; then
+            echo "::error::Copilot coding agent is not enabled in this repository"
+            exit 1
+          fi
+          
+          echo "copilot_id=$copilot_id" >> $GITHUB_OUTPUT
+          echo "Found Copilot bot ID: $copilot_id"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create QA review issue
+        id: create-issue
+        run: |
+          OWNER="${{ github.repository_owner }}"
+          REPO="${{ github.event.repository.name }}"
+          
+          # Get repository ID
+          repo_id=$(gh api graphql -f query="
+            query {
+              repository(owner: \"$OWNER\", name: \"$REPO\") { id }
+            }
+          " | jq -r '.data.repository.id')
+          
+          TITLE="🔍 QA Review Cycle - $(date +%Y-%m-%d)"
+          BODY="## QA Review Instructions
+
+          Please perform a quality assurance review of the project.
 
           ## Review Tasks
 
@@ -257,6 +299,69 @@ jobs:
           ## Reference Files
           - Task list: tasks.md
           - Loop state: .meta/loop-state.json"
+          
+          # Create issue and get its ID
+          response=$(gh api graphql -f query="
+            mutation {
+              createIssue(input: {
+                repositoryId: \"$repo_id\",
+                title: \"$TITLE\",
+                body: \"$BODY\"
+              }) {
+                issue {
+                  id
+                  number
+                }
+              }
+            }
+          ")
+          
+          issue_id=$(echo "$response" | jq -r '.data.createIssue.issue.id')
+          issue_number=$(echo "$response" | jq -r '.data.createIssue.issue.number')
+          
+          echo "issue_id=$issue_id" >> $GITHUB_OUTPUT
+          echo "issue_number=$issue_number" >> $GITHUB_OUTPUT
+          echo "Created QA review issue #$issue_number"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add label to issue
+        run: |
+          gh issue edit ${{ steps.create-issue.outputs.issue_number }} \
+            --repo ${{ github.repository }} \
+            --add-label "copilot-qa-review"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Assign Copilot to issue
+        run: |
+          response=$(gh api graphql -f query="
+            mutation {
+              replaceActorsForAssignable(input: {
+                assignableId: \"${{ steps.create-issue.outputs.issue_id }}\",
+                actorIds: [\"${{ steps.get-copilot-id.outputs.copilot_id }}\"]
+              }) {
+                assignable {
+                  ... on Issue {
+                    id
+                    assignees(first: 10) {
+                      nodes { login }
+                    }
+                  }
+                }
+              }
+            }
+          ")
+          
+          assignees=$(echo "$response" | jq -r '.data.replaceActorsForAssignable.assignable.assignees.nodes[].login' 2>/dev/null)
+          
+          if echo "$assignees" | grep -qi "copilot"; then
+            echo "✅ Successfully assigned Copilot to QA review issue #${{ steps.create-issue.outputs.issue_number }}"
+          else
+            echo "::error::Failed to assign Copilot to issue"
+            echo "Response: $response"
+            exit 1
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -267,22 +372,60 @@ jobs:
     needs: orchestrate
     if: |
       needs.orchestrate.outputs.should_continue == 'true' && 
-      needs.orchestrate.outputs.trigger_qa == 'false'
+      needs.orchestrate.outputs.trigger_qa == 'false' &&
+      needs.orchestrate.outputs.has_tasks == 'true'
     runs-on: ubuntu-latest
     permissions:
       issues: write
     
     steps:
-      - name: Create next task issue
+      - name: Get Copilot Bot ID
+        id: get-copilot-id
         run: |
-          gh issue create \
-            --repo ${{ github.repository }} \
-            --title "🔄 Dev Loop Task - $(date +%Y-%m-%d-%H%M)" \
-            --label "copilot-dev-task" \
-            --assignee "copilot-swe-agent[bot]" \
-            --body "@github-copilot Please complete the next task in the development queue.
+          OWNER="${{ github.repository_owner }}"
+          REPO="${{ github.event.repository.name }}"
+          
+          response=$(gh api graphql -f query="
+            query {
+              repository(owner: \"$OWNER\", name: \"$REPO\") {
+                suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
+                  nodes {
+                    login
+                    __typename
+                    ... on Bot { id }
+                  }
+                }
+              }
+            }
+          ")
+          
+          copilot_id=$(echo "$response" | jq -r '.data.repository.suggestedActors.nodes[] | select(.login == "copilot-swe-agent") | .id')
+          
+          if [ -z "$copilot_id" ] || [ "$copilot_id" = "null" ]; then
+            echo "::error::Copilot coding agent is not enabled in this repository"
+            exit 1
+          fi
+          
+          echo "copilot_id=$copilot_id" >> $GITHUB_OUTPUT
+          echo "Found Copilot bot ID: $copilot_id"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          ## Instructions
+      - name: Create task issue
+        id: create-issue
+        run: |
+          OWNER="${{ github.repository_owner }}"
+          REPO="${{ github.event.repository.name }}"
+          
+          # Get repository ID
+          repo_id=$(gh api graphql -f query="
+            query {
+              repository(owner: \"$OWNER\", name: \"$REPO\") { id }
+            }
+          " | jq -r '.data.repository.id')
+          
+          TITLE="🔄 Dev Loop Task - $(date +%Y-%m-%d-%H%M)"
+          BODY="## Instructions
 
           1. **Read tasks.md** - Find the first task with \`- [ ]\` (incomplete) status
           2. **Implement the task** - Follow the description and acceptance criteria exactly
@@ -300,15 +443,80 @@ jobs:
           ## Reference Files
           - Task list: tasks.md
           - Loop state: .meta/loop-state.json (read-only)"
+          
+          # Create issue and get its ID
+          response=$(gh api graphql -f query="
+            mutation {
+              createIssue(input: {
+                repositoryId: \"$repo_id\",
+                title: \"$TITLE\",
+                body: \"$BODY\"
+              }) {
+                issue {
+                  id
+                  number
+                }
+              }
+            }
+          ")
+          
+          issue_id=$(echo "$response" | jq -r '.data.createIssue.issue.id')
+          issue_number=$(echo "$response" | jq -r '.data.createIssue.issue.number')
+          
+          echo "issue_id=$issue_id" >> $GITHUB_OUTPUT
+          echo "issue_number=$issue_number" >> $GITHUB_OUTPUT
+          echo "Created task issue #$issue_number"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add label to issue
+        run: |
+          gh issue edit ${{ steps.create-issue.outputs.issue_number }} \
+            --repo ${{ github.repository }} \
+            --add-label "copilot-dev-task"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Assign Copilot to issue
+        run: |
+          response=$(gh api graphql -f query="
+            mutation {
+              replaceActorsForAssignable(input: {
+                assignableId: \"${{ steps.create-issue.outputs.issue_id }}\",
+                actorIds: [\"${{ steps.get-copilot-id.outputs.copilot_id }}\"]
+              }) {
+                assignable {
+                  ... on Issue {
+                    id
+                    assignees(first: 10) {
+                      nodes { login }
+                    }
+                  }
+                }
+              }
+            }
+          ")
+          
+          assignees=$(echo "$response" | jq -r '.data.replaceActorsForAssignable.assignable.assignees.nodes[].login' 2>/dev/null)
+          
+          if echo "$assignees" | grep -qi "copilot"; then
+            echo "✅ Successfully assigned Copilot to task issue #${{ steps.create-issue.outputs.issue_number }}"
+          else
+            echo "::error::Failed to assign Copilot to issue"
+            echo "Response: $response"
+            exit 1
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # ─────────────────────────────────────────────────────────────
-  # Job: All Tasks Complete
+  # Job: All Tasks Complete or Loop Stopped
   # ─────────────────────────────────────────────────────────────
   notify-complete:
     needs: orchestrate
-    if: needs.orchestrate.outputs.should_continue == 'false'
+    if: |
+      needs.orchestrate.outputs.should_continue == 'false' ||
+      needs.orchestrate.outputs.has_tasks == 'false'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -318,9 +526,8 @@ jobs:
         run: |
           gh issue create \
             --repo ${{ github.repository }} \
-            --title "✅ Dev Loop Complete or Paused" \
+            --title "✅ Dev Loop Complete or Paused - $(date +%Y-%m-%d)" \
             --label "copilot-loop-status" \
-            --assignee "copilot-swe-agent[bot]" \
             --body "The autonomous development loop has stopped.
 
           ## Possible Reasons
