@@ -233,7 +233,7 @@ jobs:
             --repo ${{ github.repository }} \
             --title "🔍 QA Review Cycle - $(date +%Y-%m-%d)" \
             --label "copilot-qa-review" \
-            --assignee Copilot \
+            --assignee "copilot-swe-agent[bot]" \
             --body "@github-copilot Please perform a quality assurance review of the project.
 
           ## Review Tasks
@@ -279,7 +279,7 @@ jobs:
             --repo ${{ github.repository }} \
             --title "🔄 Dev Loop Task - $(date +%Y-%m-%d-%H%M)" \
             --label "copilot-dev-task" \
-            --assignee Copilot \
+            --assignee "copilot-swe-agent[bot]" \
             --body "@github-copilot Please complete the next task in the development queue.
 
           ## Instructions
@@ -320,7 +320,7 @@ jobs:
             --repo ${{ github.repository }} \
             --title "✅ Dev Loop Complete or Paused" \
             --label "copilot-loop-status" \
-            --assignee Copilot \
+            --assignee "copilot-swe-agent[bot]" \
             --body "The autonomous development loop has stopped.
 
           ## Possible Reasons
