@@ -1,0 +1,5 @@
+# Repositories
+
+Database access layer will be placed here.
+
+Repositories handle database queries and data persistence.

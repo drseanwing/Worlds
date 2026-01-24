@@ -1,0 +1,5 @@
+# Uploads
+
+User-uploaded files will be stored here.
+
+**Note:** This directory should have write permissions for the web server and be excluded from Git.

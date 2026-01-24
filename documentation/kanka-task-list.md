@@ -12,7 +12,7 @@
 
 ### 1.1 Project Setup
 
-- [ ] 1.1.1 Create project directory structure
+- [x] 1.1.1 Create project directory structure
 - [x] 1.1.2 Initialise Git repository
 - [ ] 1.1.3 Create `.gitignore` file for PHP/SQLite project
 - [ ] 1.1.4 Create `composer.json` with minimal dependencies
