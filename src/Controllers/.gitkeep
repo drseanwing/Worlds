@@ -1,0 +1,5 @@
+# Controllers
+
+HTTP request handlers will be placed here.
+
+Controllers handle incoming requests, interact with repositories, and return responses.
