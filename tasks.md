@@ -22,7 +22,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `.gitignore`
 
 ### 1.2 Create composer.json configuration
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Initialize PHP dependency management
 - **Acceptance criteria:**
   - Defines project name
