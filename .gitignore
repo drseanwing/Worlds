@@ -26,6 +26,7 @@ Thumbs.db
 # Build artifacts
 /public/build/
 /public/css/app.css
+/public/assets/css/output.css
 
 # Cache
 /cache/
