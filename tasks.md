@@ -31,7 +31,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `composer.json`
 
 ### 1.3 Install Composer dependencies
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Run composer install to set up autoloader
 - **Acceptance criteria:**
   - Vendor directory created
