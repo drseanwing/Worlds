@@ -1,0 +1,19 @@
+{
+    "name": "drseanwing/worlds",
+    "description": "A lightweight worldbuilding and RPG campaign management tool",
+    "type": "project",
+    "require": {
+        "php": ">=8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Worlds\\": "src/"
+        }
+    },
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Sean Wing"
+        }
+    ]
+}
