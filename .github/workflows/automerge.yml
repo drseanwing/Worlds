@@ -1,0 +1,303 @@
+name: Auto-merge Copilot PRs
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+
+# Prevent concurrent runs on the same PR
+concurrency:
+  group: copilot-auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  auto-merge-copilot:
+    # Only run for Copilot-created PRs
+    if: >
+      github.actor == 'copilot-swe-agent[bot]' || 
+      github.actor == 'github-copilot[bot]'
+    
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      MAX_CONFLICT_ATTEMPTS: 3
+    
+    steps:
+      # ─────────────────────────────────────────────────────────
+      # Step 1: Auto-approve the PR
+      # ─────────────────────────────────────────────────────────
+      - name: Approve PR
+        run: |
+          echo "::group::Approving PR #$PR_NUMBER"
+          gh pr review $PR_NUMBER \
+            --approve \
+            --body "Auto-approved Copilot PR" \
+            --repo ${{ github.repository }}
+          echo "::endgroup::"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─────────────────────────────────────────────────────────
+      # Step 2: Wait for and check mergeable status
+      # ─────────────────────────────────────────────────────────
+      - name: Check merge status
+        id: merge-check
+        run: |
+          echo "::group::Checking mergeable status"
+          
+          MAX_ATTEMPTS=10
+          ATTEMPT=0
+          
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            ATTEMPT=$((ATTEMPT + 1))
+            echo "Attempt $ATTEMPT of $MAX_ATTEMPTS"
+            
+            # Fetch PR details
+            PR_DATA=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json mergeable,mergeStateStatus)
+            MERGEABLE=$(echo "$PR_DATA" | jq -r '.mergeable')
+            MERGE_STATE=$(echo "$PR_DATA" | jq -r '.mergeStateStatus')
+            
+            echo "Mergeable: $MERGEABLE"
+            echo "Merge State: $MERGE_STATE"
+            
+            # If GitHub hasn't calculated yet, wait and retry
+            if [ "$MERGEABLE" = "UNKNOWN" ] || [ "$MERGEABLE" = "" ]; then
+              echo "Mergeable status not yet calculated, waiting 10s..."
+              sleep 10
+              continue
+            fi
+            
+            # We have a definitive answer
+            if [ "$MERGEABLE" = "MERGEABLE" ]; then
+              echo "has_conflicts=false" >> $GITHUB_OUTPUT
+              echo "✅ PR is mergeable"
+            else
+              echo "has_conflicts=true" >> $GITHUB_OUTPUT
+              echo "❌ PR has conflicts (state: $MERGE_STATE)"
+            fi
+            
+            echo "::endgroup::"
+            exit 0
+          done
+          
+          # Timed out waiting for status
+          echo "::error::Timed out waiting for mergeable status"
+          exit 1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─────────────────────────────────────────────────────────
+      # Step 3: Check conflict resolution attempt count
+      # ─────────────────────────────────────────────────────────
+      - name: Check conflict resolution attempts
+        id: attempt-check
+        if: steps.merge-check.outputs.has_conflicts == 'true'
+        run: |
+          echo "::group::Checking conflict resolution attempt count"
+          
+          # Count comments containing our conflict marker
+          ATTEMPT_COUNT=$(gh pr view $PR_NUMBER \
+            --repo ${{ github.repository }} \
+            --json comments \
+            --jq '[.comments[] | select(.body | contains("⚠️ **Merge conflicts detected**"))] | length')
+          
+          echo "Previous conflict resolution attempts: $ATTEMPT_COUNT"
+          echo "Maximum allowed attempts: $MAX_CONFLICT_ATTEMPTS"
+          
+          if [ "$ATTEMPT_COUNT" -ge "$MAX_CONFLICT_ATTEMPTS" ]; then
+            echo "max_attempts_reached=true" >> $GITHUB_OUTPUT
+            echo "::warning::Maximum conflict resolution attempts reached"
+          else
+            echo "max_attempts_reached=false" >> $GITHUB_OUTPUT
+            NEXT_ATTEMPT=$((ATTEMPT_COUNT + 1))
+            echo "attempt_number=$NEXT_ATTEMPT" >> $GITHUB_OUTPUT
+            echo "This will be attempt #$NEXT_ATTEMPT"
+          fi
+          
+          echo "::endgroup::"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─────────────────────────────────────────────────────────
+      # Step 4a: Max attempts reached → Flag for manual intervention
+      # ─────────────────────────────────────────────────────────
+      - name: Flag for manual intervention
+        if: |
+          steps.merge-check.outputs.has_conflicts == 'true' && 
+          steps.attempt-check.outputs.max_attempts_reached == 'true'
+        run: |
+          echo "::group::Flagging PR for manual intervention"
+          
+          BRANCH=${{ github.event.pull_request.head.ref }}
+          BASE=${{ github.event.pull_request.base.ref }}
+          
+          # Add label to indicate manual intervention needed
+          gh pr edit $PR_NUMBER \
+            --repo ${{ github.repository }} \
+            --add-label "needs-manual-merge" || true
+          
+          # Post final comment
+          gh pr comment $PR_NUMBER \
+            --repo ${{ github.repository }} \
+            --body "🛑 **Maximum conflict resolution attempts reached ($MAX_CONFLICT_ATTEMPTS)**
+
+          Copilot was unable to automatically resolve merge conflicts after multiple attempts.
+
+          **Manual intervention required:**
+          \`\`\`bash
+          git checkout $BRANCH
+          git fetch origin $BASE
+          git merge origin/$BASE
+          # Resolve conflicts manually
+          git add .
+          git commit -m \"Resolve merge conflicts\"
+          git push
+          \`\`\`
+
+          Once conflicts are resolved, this workflow will automatically complete the merge."
+          
+          # Close any open conflict resolution issues
+          ISSUES=$(gh issue list \
+            --repo ${{ github.repository }} \
+            --label "copilot-conflict-resolution" \
+            --search "in:title PR #$PR_NUMBER" \
+            --state open \
+            --json number \
+            --jq '.[].number')
+          
+          for ISSUE in $ISSUES; do
+            echo "Closing issue #$ISSUE (max attempts reached)"
+            gh issue close $ISSUE \
+              --repo ${{ github.repository }} \
+              --comment "🛑 Maximum conflict resolution attempts reached. Manual intervention required on PR #$PR_NUMBER."
+          done
+          
+          echo "::endgroup::"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─────────────────────────────────────────────────────────
+      # Step 4b: Conflicts exist, attempts remain → Request Copilot help
+      # ─────────────────────────────────────────────────────────
+      - name: Request Copilot resolve conflicts
+        if: |
+          steps.merge-check.outputs.has_conflicts == 'true' && 
+          steps.attempt-check.outputs.max_attempts_reached == 'false'
+        run: |
+          echo "::group::Creating conflict resolution request (attempt ${{ steps.attempt-check.outputs.attempt_number }})"
+          
+          BRANCH=${{ github.event.pull_request.head.ref }}
+          BASE=${{ github.event.pull_request.base.ref }}
+          ATTEMPT=${{ steps.attempt-check.outputs.attempt_number }}
+          
+          # Check if we already have an open conflict resolution issue
+          EXISTING=$(gh issue list \
+            --repo ${{ github.repository }} \
+            --label "copilot-conflict-resolution" \
+            --search "in:title PR #$PR_NUMBER" \
+            --state open \
+            --json number \
+            --jq 'length')
+          
+          if [ "$EXISTING" -gt 0 ]; then
+            echo "Conflict resolution issue already exists, skipping creation"
+            echo "::endgroup::"
+            exit 0
+          fi
+          
+          # Create issue to trigger Copilot
+          gh issue create \
+            --repo ${{ github.repository }} \
+            --title "Resolve merge conflicts for PR #$PR_NUMBER (attempt $ATTEMPT/$MAX_CONFLICT_ATTEMPTS)" \
+            --label "copilot-conflict-resolution" \
+            --body "@github-copilot Please resolve the merge conflicts in PR #$PR_NUMBER.
+
+          **Branch:** \`$BRANCH\`
+          **Target:** \`$BASE\`
+          **Attempt:** $ATTEMPT of $MAX_CONFLICT_ATTEMPTS
+
+          Steps:
+          1. Checkout branch \`$BRANCH\`
+          2. Merge \`$BASE\` into it and resolve any conflicts
+          3. Ensure all tests pass
+          4. Push the resolved changes
+
+          Reference PR: #$PR_NUMBER"
+          
+          # Add comment to original PR
+          gh pr comment $PR_NUMBER \
+            --repo ${{ github.repository }} \
+            --body "⚠️ **Merge conflicts detected** (attempt $ATTEMPT of $MAX_CONFLICT_ATTEMPTS)
+
+          I've created an issue to request Copilot resolve the conflicts.
+          This PR will be automatically merged once conflicts are resolved.
+
+          _Remaining attempts: $((MAX_CONFLICT_ATTEMPTS - ATTEMPT))_"
+          
+          echo "::endgroup::"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─────────────────────────────────────────────────────────
+      # Step 5: No conflicts → Mark ready, merge, cleanup
+      # ─────────────────────────────────────────────────────────
+      - name: Mark ready for review
+        if: steps.merge-check.outputs.has_conflicts == 'false'
+        run: |
+          echo "::group::Marking PR ready for review"
+          gh pr ready $PR_NUMBER \
+            --repo ${{ github.repository }} || true
+          echo "::endgroup::"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge PR
+        if: steps.merge-check.outputs.has_conflicts == 'false'
+        run: |
+          echo "::group::Merging PR"
+          gh pr merge $PR_NUMBER \
+            --repo ${{ github.repository }} \
+            --squash \
+            --delete-branch \
+            --body "Auto-merged Copilot PR"
+          echo "::endgroup::"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─────────────────────────────────────────────────────────
+      # Step 6: Close conflict resolution issues after successful merge
+      # ─────────────────────────────────────────────────────────
+      - name: Close related conflict issues
+        if: steps.merge-check.outputs.has_conflicts == 'false'
+        run: |
+          echo "::group::Closing related conflict resolution issues"
+          
+          # Find and close any conflict resolution issues for this PR
+          ISSUES=$(gh issue list \
+            --repo ${{ github.repository }} \
+            --label "copilot-conflict-resolution" \
+            --search "in:title PR #$PR_NUMBER" \
+            --state open \
+            --json number \
+            --jq '.[].number')
+          
+          for ISSUE in $ISSUES; do
+            echo "Closing issue #$ISSUE"
+            gh issue close $ISSUE \
+              --repo ${{ github.repository }} \
+              --comment "✅ PR #$PR_NUMBER has been successfully merged."
+          done
+          
+          # Remove manual merge label if present
+          gh pr edit $PR_NUMBER \
+            --repo ${{ github.repository }} \
+            --remove-label "needs-manual-merge" 2>/dev/null || true
+          
+          echo "::endgroup::"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
