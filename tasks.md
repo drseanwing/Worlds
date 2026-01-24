@@ -194,7 +194,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 4: Database Layer
 
 ### 4.1 Create campaigns table SQL
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define SQL for campaign storage
 - **Acceptance criteria:**
   - Has id primary key
@@ -204,7 +204,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `database/001_campaigns.sql`
 
 ### 4.2 Create entities table SQL
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define SQL for polymorphic entity storage
 - **Acceptance criteria:**
   - Has id primary key
@@ -215,7 +215,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `database/002_entities.sql`
 
 ### 4.3 Create relations table SQL
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define SQL for entity relationships
 - **Acceptance criteria:**
   - Has source_id foreign key
@@ -225,7 +225,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `database/003_relations.sql`
 
 ### 4.4 Create tags table SQL
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define SQL for tag storage
 - **Acceptance criteria:**
   - Has id primary key
@@ -235,7 +235,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `database/004_tags.sql`
 
 ### 4.5 Create entity_tags junction table SQL
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define SQL for entity-tag associations
 - **Acceptance criteria:**
   - Has entity_id foreign key
@@ -244,7 +244,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `database/005_entity_tags.sql`
 
 ### 4.6 Create attributes table SQL
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define SQL for custom attributes
 - **Acceptance criteria:**
   - Has id primary key
@@ -255,7 +255,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `database/006_attributes.sql`
 
 ### 4.7 Create posts table SQL
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define SQL for entity sub-entries
 - **Acceptance criteria:**
   - Has id primary key
@@ -265,7 +265,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `database/007_posts.sql`
 
 ### 4.8 Create files table SQL
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define SQL for file attachments
 - **Acceptance criteria:**
   - Has id primary key
@@ -275,7 +275,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `database/008_files.sql`
 
 ### 4.9 Create users table SQL
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define SQL for simple authentication
 - **Acceptance criteria:**
   - Has id primary key
@@ -285,7 +285,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `database/009_users.sql`
 
 ### 4.10 Create FTS5 virtual table SQL
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define SQL for full-text search
 - **Acceptance criteria:**
   - Creates entities_fts virtual table
@@ -294,7 +294,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `database/010_fts.sql`
 
 ### 4.11 Create database indexes SQL
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define SQL for performance indexes
 - **Acceptance criteria:**
   - Indexes entity_type column
@@ -303,7 +303,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `database/011_indexes.sql`
 
 ### 4.12 Create master migration script
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Combine all SQL files for initialization
 - **Acceptance criteria:**
   - Runs all SQL files in order
