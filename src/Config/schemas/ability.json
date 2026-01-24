@@ -1,0 +1,41 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Ability",
+    "description": "Schema for Ability entity type-specific fields",
+    "type": "object",
+    "properties": {
+        "ability_type": {
+            "type": ["string", "null"],
+            "description": "Type of ability (e.g., Spell, Skill, Feat, Power, Trait)"
+        },
+        "charges": {
+            "type": ["integer", "null"],
+            "description": "Number of charges or uses per rest/day"
+        },
+        "effects": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "default": [],
+            "description": "List of effects or consequences of using the ability"
+        },
+        "range": {
+            "type": ["string", "null"],
+            "description": "Range or area of effect"
+        },
+        "duration": {
+            "type": ["string", "null"],
+            "description": "Duration of the ability's effects"
+        },
+        "requirements": {
+            "type": ["string", "null"],
+            "description": "Prerequisites or requirements to use the ability"
+        },
+        "cooldown": {
+            "type": ["string", "null"],
+            "description": "Cooldown or recharge time"
+        }
+    },
+    "additionalProperties": true
+}

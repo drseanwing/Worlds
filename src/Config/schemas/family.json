@@ -1,0 +1,29 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Family",
+    "description": "Schema for Family entity type-specific fields",
+    "type": "object",
+    "properties": {
+        "seat_location_id": {
+            "type": ["integer", "null"],
+            "description": "Reference to Location entity (family seat)"
+        },
+        "motto": {
+            "type": ["string", "null"],
+            "description": "Family motto or words"
+        },
+        "coat_of_arms": {
+            "type": ["string", "null"],
+            "description": "Description or reference to coat of arms image"
+        },
+        "founding_date": {
+            "type": ["string", "null"],
+            "description": "When the family was founded"
+        },
+        "status": {
+            "type": ["string", "null"],
+            "description": "Current status of the family (e.g., Noble, Extinct, Common)"
+        }
+    },
+    "additionalProperties": true
+}

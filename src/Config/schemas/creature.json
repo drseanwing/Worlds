@@ -1,0 +1,50 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Creature",
+    "description": "Schema for Creature entity type-specific fields",
+    "type": "object",
+    "properties": {
+        "creature_type": {
+            "type": ["string", "null"],
+            "description": "Type of creature (e.g., Beast, Undead, Dragon, Elemental)"
+        },
+        "habitat": {
+            "type": ["string", "null"],
+            "description": "Natural habitat or environment"
+        },
+        "is_sentient": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether the creature is sentient/intelligent"
+        },
+        "size": {
+            "type": ["string", "null"],
+            "description": "Size category (e.g., Tiny, Small, Medium, Large, Huge, Gargantuan)"
+        },
+        "diet": {
+            "type": ["string", "null"],
+            "description": "Dietary habits (e.g., Carnivore, Herbivore, Omnivore)"
+        },
+        "abilities": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "default": [],
+            "description": "List of special abilities or attacks"
+        },
+        "danger_level": {
+            "type": ["string", "null"],
+            "description": "Challenge rating or danger level"
+        },
+        "location_ids": {
+            "type": "array",
+            "items": {
+                "type": "integer"
+            },
+            "default": [],
+            "description": "References to Location entities where creature can be found"
+        }
+    },
+    "additionalProperties": true
+}

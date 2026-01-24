@@ -1,0 +1,68 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Timeline",
+    "description": "Schema for Timeline entity type-specific fields",
+    "type": "object",
+    "properties": {
+        "eras": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "start_year": {
+                        "type": ["integer", "null"]
+                    },
+                    "end_year": {
+                        "type": ["integer", "null"]
+                    },
+                    "description": {
+                        "type": ["string", "null"]
+                    },
+                    "colour": {
+                        "type": ["string", "null"]
+                    }
+                },
+                "required": ["name"]
+            },
+            "default": [],
+            "description": "List of historical eras"
+        },
+        "entries": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "year": {
+                        "type": ["integer", "null"]
+                    },
+                    "date": {
+                        "type": ["string", "null"]
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": ["string", "null"]
+                    },
+                    "entity_id": {
+                        "type": ["integer", "null"]
+                    },
+                    "era": {
+                        "type": ["string", "null"]
+                    }
+                },
+                "required": ["title"]
+            },
+            "default": [],
+            "description": "List of timeline entries"
+        },
+        "calendar_id": {
+            "type": ["integer", "null"],
+            "description": "Reference to Calendar entity for dating"
+        }
+    },
+    "additionalProperties": true
+}

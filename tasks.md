@@ -369,7 +369,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 6: Entity Type Schemas
 
 ### 6.1 Create Character JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Character entities
 - **Acceptance criteria:**
   - Defines age field
@@ -379,7 +379,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/character.json`
 
 ### 6.2 Create Location JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Location entities
 - **Acceptance criteria:**
   - Defines location_type field
@@ -388,7 +388,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/location.json`
 
 ### 6.3 Create Family JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Family entities
 - **Acceptance criteria:**
   - Defines seat_location_id reference
@@ -396,7 +396,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/family.json`
 
 ### 6.4 Create Organisation JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Organisation entities
 - **Acceptance criteria:**
   - Defines organisation_type field
@@ -405,7 +405,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/organisation.json`
 
 ### 6.5 Create Item JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Item entities
 - **Acceptance criteria:**
   - Defines item_type field
@@ -414,7 +414,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/item.json`
 
 ### 6.6 Create Note JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Note entities
 - **Acceptance criteria:**
   - Defines note_type field
@@ -422,7 +422,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/note.json`
 
 ### 6.7 Create Event JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Event entities
 - **Acceptance criteria:**
   - Defines date field
@@ -431,7 +431,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/event.json`
 
 ### 6.8 Create Calendar JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Calendar entities
 - **Acceptance criteria:**
   - Defines months array
@@ -440,7 +440,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/calendar.json`
 
 ### 6.9 Create Race JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Race entities
 - **Acceptance criteria:**
   - Defines lifespan field
@@ -449,7 +449,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/race.json`
 
 ### 6.10 Create Quest JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Quest entities
 - **Acceptance criteria:**
   - Defines quest_type field
@@ -458,7 +458,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/quest.json`
 
 ### 6.11 Create Journal JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Journal entities
 - **Acceptance criteria:**
   - Defines date field
@@ -467,7 +467,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/journal.json`
 
 ### 6.12 Create Map JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Map entities
 - **Acceptance criteria:**
   - Defines image_path field
@@ -476,7 +476,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/map.json`
 
 ### 6.13 Create Timeline JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Timeline entities
 - **Acceptance criteria:**
   - Defines eras array
@@ -484,7 +484,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/timeline.json`
 
 ### 6.14 Create Ability JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Ability entities
 - **Acceptance criteria:**
   - Defines ability_type field
@@ -493,7 +493,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/ability.json`
 
 ### 6.15 Create Creature JSON schema
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define data fields for Creature entities
 - **Acceptance criteria:**
   - Defines creature_type field
@@ -502,7 +502,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/schemas/creature.json`
 
 ### 6.16 Create EntityType registry class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Load all entity type schemas
 - **Acceptance criteria:**
   - Loads JSON schema files
@@ -511,7 +511,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/EntityTypes.php`
 
 ### 6.17 Implement schema validation
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Validate entity data against schema
 - **Acceptance criteria:**
   - Checks required fields

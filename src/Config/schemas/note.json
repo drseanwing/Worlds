@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Note",
+    "description": "Schema for Note entity type-specific fields (minimal structure for flexibility)",
+    "type": "object",
+    "properties": {
+        "note_type": {
+            "type": ["string", "null"],
+            "description": "Type or category of note (e.g., Lore, Secret, Plot, Reference)"
+        },
+        "is_secret": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether this note contains secret/hidden information"
+        },
+        "importance": {
+            "type": ["string", "null"],
+            "description": "Importance level (e.g., Low, Medium, High, Critical)"
+        }
+    },
+    "additionalProperties": true
+}

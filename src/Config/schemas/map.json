@@ -1,0 +1,68 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Map",
+    "description": "Schema for Map entity type-specific fields",
+    "type": "object",
+    "properties": {
+        "image_path": {
+            "type": ["string", "null"],
+            "description": "Path to the map image file"
+        },
+        "markers": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "x": {
+                        "type": "number"
+                    },
+                    "y": {
+                        "type": "number"
+                    },
+                    "label": {
+                        "type": "string"
+                    },
+                    "entity_id": {
+                        "type": ["integer", "null"]
+                    },
+                    "icon": {
+                        "type": ["string", "null"]
+                    }
+                },
+                "required": ["x", "y"]
+            },
+            "default": [],
+            "description": "List of markers on the map"
+        },
+        "bounds": {
+            "type": ["object", "null"],
+            "properties": {
+                "width": {
+                    "type": "number"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "min_zoom": {
+                    "type": ["number", "null"]
+                },
+                "max_zoom": {
+                    "type": ["number", "null"]
+                }
+            },
+            "description": "Map dimensions and zoom limits"
+        },
+        "map_type": {
+            "type": ["string", "null"],
+            "description": "Type of map (e.g., World, Region, City, Building, Dungeon)"
+        },
+        "grid_size": {
+            "type": ["integer", "null"],
+            "description": "Size of map grid if applicable"
+        }
+    },
+    "additionalProperties": true
+}

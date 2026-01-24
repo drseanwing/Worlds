@@ -1,0 +1,76 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Calendar",
+    "description": "Schema for Calendar entity type-specific fields",
+    "type": "object",
+    "properties": {
+        "months": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "days": {
+                        "type": "integer"
+                    },
+                    "position": {
+                        "type": "integer"
+                    }
+                },
+                "required": ["name", "days"]
+            },
+            "default": [],
+            "description": "List of months in the calendar"
+        },
+        "weekdays": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "default": [],
+            "description": "List of weekday names"
+        },
+        "current_date": {
+            "type": ["object", "null"],
+            "properties": {
+                "year": {
+                    "type": "integer"
+                },
+                "month": {
+                    "type": "integer"
+                },
+                "day": {
+                    "type": "integer"
+                }
+            },
+            "description": "Current date in this calendar system"
+        },
+        "year_zero": {
+            "type": ["integer", "null"],
+            "description": "The starting year of the calendar"
+        },
+        "suffix": {
+            "type": ["string", "null"],
+            "description": "Year suffix (e.g., AD, CE, Age of Wonders)"
+        },
+        "moons": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "cycle": {
+                        "type": "number"
+                    }
+                }
+            },
+            "default": [],
+            "description": "List of moons and their cycles"
+        }
+    },
+    "additionalProperties": true
+}
