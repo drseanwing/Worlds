@@ -1,0 +1,42 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Item",
+    "description": "Schema for Item entity type-specific fields",
+    "type": "object",
+    "properties": {
+        "item_type": {
+            "type": ["string", "null"],
+            "description": "Type of item (e.g., Weapon, Armor, Artifact, Tool, Consumable)"
+        },
+        "rarity": {
+            "type": ["string", "null"],
+            "description": "Rarity level (e.g., Common, Uncommon, Rare, Legendary)"
+        },
+        "is_magical": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether the item has magical properties"
+        },
+        "owner_id": {
+            "type": ["integer", "null"],
+            "description": "Reference to Character entity (current owner)"
+        },
+        "location_id": {
+            "type": ["integer", "null"],
+            "description": "Reference to Location entity (current location)"
+        },
+        "value": {
+            "type": ["string", "null"],
+            "description": "Monetary or trade value"
+        },
+        "weight": {
+            "type": ["string", "number", "null"],
+            "description": "Weight of the item"
+        },
+        "properties": {
+            "type": ["string", "null"],
+            "description": "Special properties or abilities"
+        }
+    },
+    "additionalProperties": true
+}

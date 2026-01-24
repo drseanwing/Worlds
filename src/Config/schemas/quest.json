@@ -1,0 +1,47 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Quest",
+    "description": "Schema for Quest entity type-specific fields",
+    "type": "object",
+    "properties": {
+        "quest_type": {
+            "type": ["string", "null"],
+            "description": "Type of quest (e.g., Main, Side, Character, Bounty)"
+        },
+        "status": {
+            "type": "string",
+            "enum": ["planned", "ongoing", "completed", "failed", "abandoned"],
+            "default": "planned",
+            "description": "Current status of the quest"
+        },
+        "giver_id": {
+            "type": ["integer", "null"],
+            "description": "Reference to Character entity (quest giver)"
+        },
+        "location_ids": {
+            "type": "array",
+            "items": {
+                "type": "integer"
+            },
+            "default": [],
+            "description": "References to Location entities involved"
+        },
+        "character_ids": {
+            "type": "array",
+            "items": {
+                "type": "integer"
+            },
+            "default": [],
+            "description": "References to Character entities involved"
+        },
+        "reward": {
+            "type": ["string", "null"],
+            "description": "Reward for completing the quest"
+        },
+        "difficulty": {
+            "type": ["string", "null"],
+            "description": "Difficulty level of the quest"
+        }
+    },
+    "additionalProperties": true
+}

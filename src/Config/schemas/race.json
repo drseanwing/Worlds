@@ -1,0 +1,41 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Race",
+    "description": "Schema for Race entity type-specific fields",
+    "type": "object",
+    "properties": {
+        "lifespan": {
+            "type": ["string", "integer", "null"],
+            "description": "Typical lifespan of the race"
+        },
+        "size": {
+            "type": ["string", "null"],
+            "description": "Size category (e.g., Tiny, Small, Medium, Large, Huge)"
+        },
+        "traits": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "default": [],
+            "description": "List of racial traits or abilities"
+        },
+        "homeland_id": {
+            "type": ["integer", "null"],
+            "description": "Reference to Location entity (racial homeland)"
+        },
+        "languages": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "default": [],
+            "description": "Languages commonly spoken by this race"
+        },
+        "physical_description": {
+            "type": ["string", "null"],
+            "description": "General physical characteristics"
+        }
+    },
+    "additionalProperties": true
+}

@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Journal",
+    "description": "Schema for Journal entity type-specific fields",
+    "type": "object",
+    "properties": {
+        "date": {
+            "type": ["string", "null"],
+            "description": "Date of the journal entry (in-world or real-world)"
+        },
+        "session_number": {
+            "type": ["integer", "null"],
+            "description": "Session number for campaign session logs"
+        },
+        "author_id": {
+            "type": ["integer", "null"],
+            "description": "Reference to Character entity (author in-world) or user"
+        },
+        "journal_type": {
+            "type": ["string", "null"],
+            "description": "Type of journal (e.g., Session Log, Diary, Report)"
+        },
+        "calendar_id": {
+            "type": ["integer", "null"],
+            "description": "Reference to Calendar entity for in-world dating"
+        },
+        "location_id": {
+            "type": ["integer", "null"],
+            "description": "Reference to Location entity where events occurred"
+        }
+    },
+    "additionalProperties": true
+}

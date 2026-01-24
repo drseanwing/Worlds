@@ -1,0 +1,45 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Location",
+    "description": "Schema for Location entity type-specific fields",
+    "type": "object",
+    "properties": {
+        "location_type": {
+            "type": ["string", "null"],
+            "description": "Type of location (e.g., City, Village, Region, Building, POI)"
+        },
+        "population": {
+            "type": ["string", "integer", "null"],
+            "description": "Population of the location"
+        },
+        "map_id": {
+            "type": ["integer", "null"],
+            "description": "Reference to Map entity"
+        },
+        "geography": {
+            "type": ["string", "null"],
+            "description": "Geographic features and terrain"
+        },
+        "climate": {
+            "type": ["string", "null"],
+            "description": "Climate or weather patterns"
+        },
+        "government": {
+            "type": ["string", "null"],
+            "description": "Type of government or ruling structure"
+        },
+        "coordinates": {
+            "type": ["object", "null"],
+            "properties": {
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                }
+            },
+            "description": "Map coordinates if applicable"
+        }
+    },
+    "additionalProperties": true
+}
