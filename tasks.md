@@ -39,7 +39,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `vendor/`
 
 ### 1.4 Create package.json configuration
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Initialize frontend dependency management
 - **Acceptance criteria:**
   - Defines project name
@@ -48,7 +48,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `package.json`
 
 ### 1.5 Install npm dependencies
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Run npm install to set up frontend tools
 - **Acceptance criteria:**
   - node_modules directory created
@@ -56,7 +56,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `node_modules/`
 
 ### 1.6 Create environment configuration example
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define environment variables template
 - **Acceptance criteria:**
   - Lists database path variable
@@ -65,7 +65,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `.env.example`
 
 ### 1.7 Create configuration loader class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement PHP class to load environment config
 - **Acceptance criteria:**
   - Reads from .env file
@@ -74,7 +74,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Config.php`
 
 ### 1.8 Set up directory permissions
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Document required permissions for uploads
 - **Acceptance criteria:**
   - Data directory is writable
@@ -86,7 +86,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 2: Docker Environment
 
 ### 2.1 Create PHP 8 Dockerfile
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define container image for PHP 8 with Apache
 - **Acceptance criteria:**
   - Uses PHP 8.2 base image
@@ -95,7 +95,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `Dockerfile`
 
 ### 2.2 Create docker-compose.yml file
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define local development environment
 - **Acceptance criteria:**
   - Maps port 8080 to container
@@ -104,7 +104,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `docker-compose.yml`
 
 ### 2.3 Configure Apache virtual host
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Set up clean URL routing
 - **Acceptance criteria:**
   - Points document root to public directory
@@ -112,7 +112,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `docker/apache.conf`
 
 ### 2.4 Create .dockerignore file
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define files to exclude from Docker build
 - **Acceptance criteria:**
   - Excludes .git directory
@@ -121,7 +121,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `.dockerignore`
 
 ### 2.5 Test container build
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Verify Docker container builds correctly
 - **Acceptance criteria:**
   - Container builds without errors
@@ -133,7 +133,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 3: Frontend Build Pipeline
 
 ### 3.1 Create Tailwind configuration
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Configure Tailwind CSS framework
 - **Acceptance criteria:**
   - Scans PHP template files for classes
@@ -141,7 +141,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `tailwind.config.js`
 
 ### 3.2 Create base CSS file
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define CSS entry point with Tailwind directives
 - **Acceptance criteria:**
   - Includes @tailwind base
@@ -150,7 +150,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/css/app.css`
 
 ### 3.3 Configure PostCSS
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Set up CSS processing pipeline
 - **Acceptance criteria:**
   - Includes Tailwind plugin
@@ -158,7 +158,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `postcss.config.js`
 
 ### 3.4 Create CSS build script
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Add npm script to compile CSS
 - **Acceptance criteria:**
   - Outputs minified CSS to public directory
@@ -166,7 +166,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `package.json`
 
 ### 3.5 Create CSS watch script
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Add npm script for development mode
 - **Acceptance criteria:**
   - Watches for CSS changes
@@ -174,7 +174,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `package.json`
 
 ### 3.6 Generate initial compiled CSS
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Run build to create production CSS
 - **Acceptance criteria:**
   - CSS file exists in public/assets/css
@@ -182,7 +182,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `public/assets/css/app.css`
 
 ### 3.7 Create JavaScript entry point
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Initialize Alpine.js framework
 - **Acceptance criteria:**
   - Imports Alpine.js
