@@ -1,0 +1,54 @@
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Dependencies
+node_modules
+vendor
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE and editor files
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation
+documentation
+README.md
+*.md
+
+# Tests
+tests
+phpunit.xml
+.phpunit.result.cache
+
+# Build artifacts
+/public/build/
+
+# Docker files
+docker-compose.yml
+.dockerignore
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Logs
+*.log
+logs

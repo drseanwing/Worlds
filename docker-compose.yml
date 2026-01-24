@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: worlds-web
+    ports:
+      - "8080:80"
+    volumes:
+      # Mount source code for live development
+      - .:/var/www/html
+      # Persist data directory
+      - worlds-data:/var/www/html/data
+      # Exclude vendor and node_modules from sync
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+    environment:
+      - DATABASE_PATH=/var/www/html/data/campaign.db
+      - DEBUG_MODE=true
+      - UPLOAD_DIR=/var/www/html/data/uploads
+    restart: unless-stopped
+
+volumes:
+  worlds-data:
+    driver: local
