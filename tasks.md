@@ -524,7 +524,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 7: Routing System
 
 ### 7.1 Create Router class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement HTTP request routing
 - **Acceptance criteria:**
   - Stores route definitions
@@ -532,7 +532,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Router.php`
 
 ### 7.2 Implement GET route registration
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Add method to register GET routes
 - **Acceptance criteria:**
   - Accepts URL pattern
@@ -540,7 +540,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Router.php`
 
 ### 7.3 Implement POST route registration
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Add method to register POST routes
 - **Acceptance criteria:**
   - Accepts URL pattern
@@ -548,7 +548,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Router.php`
 
 ### 7.4 Implement PUT route registration
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Add method to register PUT routes
 - **Acceptance criteria:**
   - Accepts URL pattern
@@ -556,7 +556,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Router.php`
 
 ### 7.5 Implement DELETE route registration
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Add method to register DELETE routes
 - **Acceptance criteria:**
   - Accepts URL pattern
@@ -564,7 +564,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Router.php`
 
 ### 7.6 Implement URL parameter extraction
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Parse route parameters from URL
 - **Acceptance criteria:**
   - Extracts {id} from /entity/{id}
@@ -572,7 +572,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Router.php`
 
 ### 7.7 Implement query string parsing
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Parse URL query parameters
 - **Acceptance criteria:**
   - Extracts key-value pairs
@@ -580,7 +580,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Router.php`
 
 ### 7.8 Create route dispatcher
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Execute matched route handler
 - **Acceptance criteria:**
   - Calls controller method
@@ -589,7 +589,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Router.php`
 
 ### 7.9 Implement 404 handler
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Handle unmatched routes
 - **Acceptance criteria:**
   - Returns 404 status code
@@ -597,7 +597,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Router.php`
 
 ### 7.10 Create .htaccess file
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Configure Apache URL rewriting
 - **Acceptance criteria:**
   - Enables mod_rewrite
@@ -606,7 +606,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `public/.htaccess`
 
 ### 7.11 Create front controller
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Initialize application entry point
 - **Acceptance criteria:**
   - Loads autoloader
@@ -619,7 +619,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 8: Request/Response Handling
 
 ### 8.1 Create Request class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Wrap HTTP request data
 - **Acceptance criteria:**
   - Encapsulates $_GET data
@@ -628,7 +628,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Request.php`
 
 ### 8.2 Implement request method getter
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Return HTTP method
 - **Acceptance criteria:**
   - Returns GET/POST/PUT/DELETE
@@ -636,7 +636,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Request.php`
 
 ### 8.3 Implement request path getter
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Return URL path
 - **Acceptance criteria:**
   - Strips query string
@@ -644,7 +644,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Request.php`
 
 ### 8.4 Implement JSON body parser
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Parse JSON request body
 - **Acceptance criteria:**
   - Reads php://input stream
@@ -653,7 +653,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Request.php`
 
 ### 8.5 Implement file upload getter
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Access uploaded files
 - **Acceptance criteria:**
   - Returns file data by field name
