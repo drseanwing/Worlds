@@ -662,7 +662,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Request.php`
 
 ### 8.6 Create Response class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build HTTP responses
 - **Acceptance criteria:**
   - Sets status codes
@@ -671,7 +671,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Response.php`
 
 ### 8.7 Implement HTML response method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Return HTML content
 - **Acceptance criteria:**
   - Sets Content-Type to text/html
@@ -679,7 +679,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Response.php`
 
 ### 8.8 Implement JSON response method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Return JSON content
 - **Acceptance criteria:**
   - Sets Content-Type to application/json
@@ -687,7 +687,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Response.php`
 
 ### 8.9 Implement redirect response method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Redirect to URL
 - **Acceptance criteria:**
   - Sets Location header
@@ -695,7 +695,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Response.php`
 
 ### 8.10 Implement file download response
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Send file for download
 - **Acceptance criteria:**
   - Sets Content-Disposition header
