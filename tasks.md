@@ -39,7 +39,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `vendor/`
 
 ### 1.4 Create package.json configuration
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Initialize frontend dependency management
 - **Acceptance criteria:**
   - Defines project name
@@ -48,7 +48,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `package.json`
 
 ### 1.5 Install npm dependencies
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Run npm install to set up frontend tools
 - **Acceptance criteria:**
   - node_modules directory created
@@ -56,7 +56,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `node_modules/`
 
 ### 1.6 Create environment configuration example
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define environment variables template
 - **Acceptance criteria:**
   - Lists database path variable
@@ -65,7 +65,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `.env.example`
 
 ### 1.7 Create configuration loader class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement PHP class to load environment config
 - **Acceptance criteria:**
   - Reads from .env file
@@ -74,7 +74,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Config.php`
 
 ### 1.8 Set up directory permissions
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Document required permissions for uploads
 - **Acceptance criteria:**
   - Data directory is writable

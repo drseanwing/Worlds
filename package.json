@@ -1,0 +1,27 @@
+{
+  "name": "worlds",
+  "version": "0.1.0",
+  "description": "A lightweight worldbuilding and RPG campaign management tool",
+  "type": "module",
+  "scripts": {
+    "build:css": "tailwindcss -i ./public/assets/css/input.css -o ./public/assets/css/output.css",
+    "watch:css": "tailwindcss -i ./public/assets/css/input.css -o ./public/assets/css/output.css --watch",
+    "build:css:prod": "tailwindcss -i ./public/assets/css/input.css -o ./public/assets/css/output.css --minify"
+  },
+  "keywords": [
+    "worldbuilding",
+    "rpg",
+    "campaign-management",
+    "kanka"
+  ],
+  "author": "Sean Wing",
+  "license": "proprietary",
+  "dependencies": {
+    "alpinejs": "^3.13.3"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10"
+  }
+}
