@@ -167,16 +167,16 @@ jobs:
         id: check-tasks
         if: steps.check-state.outputs.should_continue == 'true'
         run: |
-          TASKS_FILE="TASKS.md"
+          tasks_FILE="tasks.md"
           
-          if [ ! -f "$TASKS_FILE" ]; then
-            echo "::error::TASKS.md not found"
+          if [ ! -f "$tasks_FILE" ]; then
+            echo "::error::tasks.md not found"
             echo "has_tasks=false" >> $GITHUB_OUTPUT
             exit 0
           fi
           
           # Count incomplete tasks (lines with "- [ ]")
-          INCOMPLETE=$(grep -c "^\- \[ \]" "$TASKS_FILE" || echo "0")
+          INCOMPLETE=$(grep -c "^\- \[ \]" "$tasks_FILE" || echo "0")
           
           echo "Incomplete tasks: $INCOMPLETE"
           
@@ -237,7 +237,7 @@ jobs:
 
           ## Review Tasks
 
-          1. **Review TASKS.md** - Check all tasks marked complete actually meet their acceptance criteria
+          1. **Review tasks.md** - Check all tasks marked complete actually meet their acceptance criteria
           2. **Run test suite** - Execute all tests and report any failures
           3. **Code quality check** - Look for obvious bugs, security issues, or code smells in recent changes
           4. **Documentation check** - Ensure docs match current implementation
@@ -245,7 +245,7 @@ jobs:
           ## Actions Required
 
           If issues are found:
-          - Update TASKS.md to mark failed tasks with \`[!]\` status
+          - Update tasks.md to mark failed tasks with \`[!]\` status
           - Add new remedial tasks if needed
           - Create a summary comment on this issue
 
@@ -254,7 +254,7 @@ jobs:
           - Close this issue
 
           ## Reference Files
-          - Task list: TASKS.md
+          - Task list: tasks.md
           - Loop state: .meta/loop-state.json"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -282,21 +282,21 @@ jobs:
 
           ## Instructions
 
-          1. **Read TASKS.md** - Find the first task with \`- [ ]\` (incomplete) status
+          1. **Read tasks.md** - Find the first task with \`- [ ]\` (incomplete) status
           2. **Implement the task** - Follow the description and acceptance criteria exactly
           3. **Update documentation** - If your changes affect docs, update them
-          4. **Mark task complete** - Change \`- [ ]\` to \`- [x]\` in TASKS.md
+          4. **Mark task complete** - Change \`- [ ]\` to \`- [x]\` in tasks.md
           5. **Create a PR** - Push your changes with a clear commit message
 
           ## Important Rules
 
           - Only work on ONE task per PR
           - Ensure all tests pass before pushing
-          - If you encounter a blocker, mark the task as \`- [!]\` and explain in TASKS.md
+          - If you encounter a blocker, mark the task as \`- [!]\` and explain in tasks.md
           - Do not modify .meta/loop-state.json
 
           ## Reference Files
-          - Task list: TASKS.md
+          - Task list: tasks.md
           - Loop state: .meta/loop-state.json (read-only)"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
