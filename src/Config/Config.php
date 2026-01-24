@@ -41,6 +41,10 @@ class Config
 
         $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         if ($lines === false) {
+            // Log error if in debug mode, otherwise fail silently
+            if (function_exists('error_log')) {
+                error_log("Worlds Config: Failed to read .env file at {$envPath}");
+            }
             self::$loaded = true;
             return;
         }
@@ -52,7 +56,7 @@ class Config
             }
 
             // Parse KEY=VALUE format
-            if (strpos($line, '=') !== false) {
+            if (str_contains($line, '=')) {
                 [$key, $value] = array_map('trim', explode('=', $line, 2));
                 
                 // Remove quotes if present

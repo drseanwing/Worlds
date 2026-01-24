@@ -53,6 +53,8 @@
 /* Custom utility styles */
 @layer utilities {
   .text-balance {
+    /* Progressive enhancement: text-wrap balance (Chrome/Edge 114+) */
     text-wrap: balance;
+    /* Fallback for older browsers - no specific action needed */
   }
 }
