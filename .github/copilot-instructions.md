@@ -512,18 +512,18 @@ When working with worldbuilding data:
 
 When working on this project, Copilot should:
 
-- [x] Use consistent entity-based data structures
-- [x] Follow naming conventions (camelCase, snake_case, kebab-case as appropriate)
-- [x] Validate all entity IDs and relationships
-- [x] Generate markdown content following the project templates
-- [x] Implement proper error handling for data operations
-- [x] Document all code and creative content thoroughly
-- [x] Keep data human-readable and version-control friendly
-- [x] Support both structured (JSON) and narrative (Markdown) content
-- [x] Maintain referential integrity in entity relationships
-- [x] Use ISO 8601 for all timestamps
-- [x] Tag content appropriately for searchability
-- [x] Write commit messages in the specified format
+- [ ] Use consistent entity-based data structures
+- [ ] Follow naming conventions (camelCase, snake_case, kebab-case as appropriate)
+- [ ] Validate all entity IDs and relationships
+- [ ] Generate markdown content following the project templates
+- [ ] Implement proper error handling for data operations
+- [ ] Document all code and creative content thoroughly
+- [ ] Keep data human-readable and version-control friendly
+- [ ] Support both structured (JSON) and narrative (Markdown) content
+- [ ] Maintain referential integrity in entity relationships
+- [ ] Use ISO 8601 for all timestamps
+- [ ] Tag content appropriately for searchability
+- [ ] Write commit messages in the specified format
 
 ---
 
