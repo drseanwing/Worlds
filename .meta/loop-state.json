@@ -1,0 +1,9 @@
+{
+    "iteration": 0,
+    "qa_interval": 5,
+    "last_task_completed": null,
+    "last_run": null,
+    "consecutive_failures": 0,
+    "max_consecutive_failures": 3,
+    "paused": false
+  }
