@@ -241,7 +241,7 @@ When implementing data structures, use this JSON schema:
     "entity_type": "character",
     "name": "Lord Valeron Stormheart",
     "summary": "The exiled Duke of Stormhold, seeking redemption after his family's fall from grace.",
-    "description": "**Lord Valeron Stormheart** is a imposing figure...",
+    "description": "**Lord Valeron Stormheart** is an imposing figure...",
     "tags": ["nobility", "warrior", "exile", "major-npc"],
     "relations": [
         {
