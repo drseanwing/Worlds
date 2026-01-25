@@ -22,6 +22,12 @@ if (!file_exists($autoloadPath)) {
 
 require_once $autoloadPath;
 
+// Load helper functions (included via composer autoload, but also load manually as fallback)
+$helpersPath = BASE_PATH . '/src/Config/helpers.php';
+if (file_exists($helpersPath)) {
+    require_once $helpersPath;
+}
+
 use Worlds\Config\Config;
 use Worlds\Config\Database;
 use Worlds\Config\Router;

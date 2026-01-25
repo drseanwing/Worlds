@@ -707,7 +707,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 9: Template Engine
 
 ### 9.1 Create View class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement template rendering
 - **Acceptance criteria:**
   - Loads PHP template files
@@ -715,7 +715,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/View.php`
 
 ### 9.2 Implement template file loading
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Find template by name
 - **Acceptance criteria:**
   - Searches Views directory
@@ -723,7 +723,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/View.php`
 
 ### 9.3 Implement variable passing
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Pass data to templates
 - **Acceptance criteria:**
   - Accepts associative array
@@ -731,7 +731,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/View.php`
 
 ### 9.4 Implement template inheritance
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Support layout templates
 - **Acceptance criteria:**
   - Child template extends parent
@@ -739,7 +739,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/View.php`
 
 ### 9.5 Implement section/yield functionality
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define replaceable content blocks
 - **Acceptance criteria:**
   - @section defines content
@@ -747,7 +747,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/View.php`
 
 ### 9.6 Implement partial includes
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Include sub-templates
 - **Acceptance criteria:**
   - @include inserts partial
@@ -755,7 +755,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/View.php`
 
 ### 9.7 Create HTML escaping helper
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Escape output for XSS prevention
 - **Acceptance criteria:**
   - Escapes HTML special characters
@@ -763,7 +763,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/helpers.php`
 
 ### 9.8 Create URL generation helper
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Generate application URLs
 - **Acceptance criteria:**
   - Accepts route name
@@ -772,7 +772,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/helpers.php`
 
 ### 9.9 Create asset URL helper
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Generate asset file URLs
 - **Acceptance criteria:**
   - Accepts asset path
@@ -780,7 +780,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/helpers.php`
 
 ### 9.10 Create CSRF token helper
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Generate form CSRF tokens
 - **Acceptance criteria:**
   - Creates random token

@@ -8,7 +8,10 @@
     "autoload": {
         "psr-4": {
             "Worlds\\": "src/"
-        }
+        },
+        "files": [
+            "src/Config/helpers.php"
+        ]
     },
     "license": "proprietary",
     "authors": [
