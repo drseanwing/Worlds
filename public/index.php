@@ -37,6 +37,9 @@ use Worlds\Controllers\CampaignController;
 use Worlds\Controllers\EntityController;
 use Worlds\Controllers\TagController;
 use Worlds\Controllers\RelationController;
+use Worlds\Controllers\AttributeController;
+use Worlds\Controllers\PostController;
+use Worlds\Controllers\FileController;
 
 // Load environment configuration
 Config::load();
@@ -193,6 +196,23 @@ $router->get('/api/entities/{id}/relations', [RelationController::class, 'index'
 $router->post('/api/entities/{id}/relations', [RelationController::class, 'store']);
 $router->put('/api/relations/{id}', [RelationController::class, 'update']);
 $router->delete('/api/relations/{id}', [RelationController::class, 'destroy']);
+
+// Attribute routes (API endpoints)
+$router->post('/api/entities/{id}/attributes', [AttributeController::class, 'store']);
+$router->put('/api/attributes/{id}', [AttributeController::class, 'update']);
+$router->delete('/api/attributes/{id}', [AttributeController::class, 'destroy']);
+
+// Post routes (API endpoints)
+$router->post('/api/entities/{id}/posts', [PostController::class, 'store']);
+$router->put('/api/posts/{id}', [PostController::class, 'update']);
+$router->delete('/api/posts/{id}', [PostController::class, 'destroy']);
+$router->post('/api/entities/{id}/posts/reorder', [PostController::class, 'reorder']);
+
+// File routes
+$router->post('/api/entities/{id}/files', [FileController::class, 'store']);
+$router->delete('/api/files/{id}', [FileController::class, 'destroy']);
+$router->get('/files/{id}', [FileController::class, 'download']);
+$router->get('/files/{id}/thumb', [FileController::class, 'download']);
 
 // Set custom 404 handler
 $router->setNotFoundHandler(function (Request $request) {

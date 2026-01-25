@@ -1458,7 +1458,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 18: Custom Attributes
 
 ### 18.1 Create AttributeRepository class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement attribute database access
 - **Acceptance criteria:**
   - Provides CRUD methods
@@ -1466,7 +1466,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/AttributeRepository.php`
 
 ### 18.2 Implement attribute CRUD methods
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Create attribute operations
 - **Acceptance criteria:**
   - Implements create method
@@ -1475,7 +1475,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/AttributeRepository.php`
 
 ### 18.3 Implement findByEntity method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Get entity attributes
 - **Acceptance criteria:**
   - Returns ordered list
@@ -1483,7 +1483,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/AttributeRepository.php`
 
 ### 18.4 Create AttributeController class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Handle attribute requests
 - **Acceptance criteria:**
   - Implements inline editing
@@ -1491,7 +1491,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/AttributeController.php`
 
 ### 18.5 Create attribute list partial
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Display entity attributes
 - **Acceptance criteria:**
   - Shows name-value pairs
@@ -1499,7 +1499,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/partials/attributes.php`
 
 ### 18.6 Create attribute form partial
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build attribute editor
 - **Acceptance criteria:**
   - Has name field
@@ -1512,7 +1512,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 19: Posts (Sub-entries)
 
 ### 19.1 Create PostRepository class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement post database access
 - **Acceptance criteria:**
   - Provides CRUD methods
@@ -1520,7 +1520,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/PostRepository.php`
 
 ### 19.2 Implement post CRUD methods
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Create post operations
 - **Acceptance criteria:**
   - Implements create method
@@ -1529,7 +1529,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/PostRepository.php`
 
 ### 19.3 Implement post reordering
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Change post positions
 - **Acceptance criteria:**
   - Updates position values
@@ -1537,7 +1537,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/PostRepository.php`
 
 ### 19.4 Create PostController class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Handle post requests
 - **Acceptance criteria:**
   - Implements CRUD actions
@@ -1545,7 +1545,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/PostController.php`
 
 ### 19.5 Create posts list partial
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Display entity posts
 - **Acceptance criteria:**
   - Shows posts in order
@@ -1553,7 +1553,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/partials/posts.php`
 
 ### 19.6 Create post form modal
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build post editor
 - **Acceptance criteria:**
   - Has title field
@@ -1566,7 +1566,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 20: File Uploads
 
 ### 20.1 Create FileRepository class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement file database access
 - **Acceptance criteria:**
   - Provides CRUD methods
@@ -1574,7 +1574,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/FileRepository.php`
 
 ### 20.2 Implement file upload handling
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Process uploaded files
 - **Acceptance criteria:**
   - Moves temp file to storage
@@ -1582,7 +1582,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/FileRepository.php`
 
 ### 20.3 Implement file type validation
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Check file MIME types
 - **Acceptance criteria:**
   - Allows images
@@ -1591,7 +1591,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/FileRepository.php`
 
 ### 20.4 Implement file size validation
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Check file size limits
 - **Acceptance criteria:**
   - Enforces max file size
@@ -1599,7 +1599,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/FileRepository.php`
 
 ### 20.5 Implement image thumbnail generation
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Create image previews
 - **Acceptance criteria:**
   - Resizes to thumbnail size
@@ -1607,7 +1607,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/FileRepository.php`
 
 ### 20.6 Implement file deletion
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Remove file records
 - **Acceptance criteria:**
   - Deletes database record
@@ -1615,7 +1615,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/FileRepository.php`
 
 ### 20.7 Create FileController class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Handle file requests
 - **Acceptance criteria:**
   - Implements upload action
@@ -1624,7 +1624,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/FileController.php`
 
 ### 20.8 Create file upload component
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build file uploader UI
 - **Acceptance criteria:**
   - Supports drag-drop
@@ -1632,7 +1632,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/partials/file-upload.php`
 
 ### 20.9 Create file list partial
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Display entity files
 - **Acceptance criteria:**
   - Shows file names
