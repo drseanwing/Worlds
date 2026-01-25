@@ -1011,7 +1011,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 12: Entity Controller
 
 ### 12.1 Create EntityController class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Handle entity HTTP requests
 - **Acceptance criteria:**
   - Uses EntityRepository
@@ -1019,7 +1019,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/EntityController.php`
 
 ### 12.2 Implement index action
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Display entity list
 - **Acceptance criteria:**
   - Fetches entities by type
@@ -1028,7 +1028,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/EntityController.php`
 
 ### 12.3 Implement show action
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Display single entity
 - **Acceptance criteria:**
   - Fetches entity by ID
@@ -1037,7 +1037,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/EntityController.php`
 
 ### 12.4 Implement create action
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Display creation form
 - **Acceptance criteria:**
   - Loads entity type schema
@@ -1045,7 +1045,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/EntityController.php`
 
 ### 12.5 Implement store action
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Save new entity
 - **Acceptance criteria:**
   - Validates input data
@@ -1054,7 +1054,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/EntityController.php`
 
 ### 12.6 Implement edit action
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Display edit form
 - **Acceptance criteria:**
   - Fetches existing entity
@@ -1062,7 +1062,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/EntityController.php`
 
 ### 12.7 Implement update action
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Save entity changes
 - **Acceptance criteria:**
   - Validates input data
@@ -1071,7 +1071,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/EntityController.php`
 
 ### 12.8 Implement destroy action
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Delete entity
 - **Acceptance criteria:**
   - Removes entity record
@@ -1079,7 +1079,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/EntityController.php`
 
 ### 12.9 Implement validation
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Validate entity input
 - **Acceptance criteria:**
   - Checks required fields
@@ -1088,7 +1088,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/EntityController.php`
 
 ### 12.10 Register entity routes
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define entity URL routes
 - **Acceptance criteria:**
   - Maps /entities to index

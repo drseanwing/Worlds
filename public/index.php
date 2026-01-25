@@ -32,6 +32,8 @@ use Worlds\Config\Config;
 use Worlds\Config\Database;
 use Worlds\Config\Router;
 use Worlds\Config\Request;
+use Worlds\Controllers\AuthController;
+use Worlds\Controllers\EntityController;
 
 // Load environment configuration
 Config::load();
@@ -102,6 +104,22 @@ $router->get('/', function (Request $request) {
 </html>
 HTML;
 });
+
+// Auth routes
+$router->get('/login', [AuthController::class, 'showLoginForm']);
+$router->post('/login', [AuthController::class, 'login']);
+$router->get('/register', [AuthController::class, 'showRegisterForm']);
+$router->post('/register', [AuthController::class, 'register']);
+$router->post('/logout', [AuthController::class, 'logout']);
+
+// Entity routes - {type} is the entity type (character, location, etc.)
+$router->get('/entities/{type}', [EntityController::class, 'index']);
+$router->get('/entities/{type}/create', [EntityController::class, 'create']);
+$router->post('/entities/{type}', [EntityController::class, 'store']);
+$router->get('/entities/{type}/{id}', [EntityController::class, 'show']);
+$router->get('/entities/{type}/{id}/edit', [EntityController::class, 'edit']);
+$router->put('/entities/{type}/{id}', [EntityController::class, 'update']);
+$router->delete('/entities/{type}/{id}', [EntityController::class, 'destroy']);
 
 // Set custom 404 handler
 $router->setNotFoundHandler(function (Request $request) {
