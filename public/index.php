@@ -32,6 +32,7 @@ use Worlds\Config\Config;
 use Worlds\Config\Database;
 use Worlds\Config\Router;
 use Worlds\Config\Request;
+use Worlds\Config\ErrorHandler;
 use Worlds\Controllers\AuthController;
 use Worlds\Controllers\CampaignController;
 use Worlds\Controllers\EntityController;
@@ -40,9 +41,13 @@ use Worlds\Controllers\RelationController;
 use Worlds\Controllers\AttributeController;
 use Worlds\Controllers\PostController;
 use Worlds\Controllers\FileController;
+use Worlds\Controllers\SearchController;
 
 // Load environment configuration
 Config::load();
+
+// Register global error handler
+ErrorHandler::register();
 
 // Enable error display in debug mode
 if (Config::isDebugMode()) {
@@ -214,32 +219,20 @@ $router->delete('/api/files/{id}', [FileController::class, 'destroy']);
 $router->get('/files/{id}', [FileController::class, 'download']);
 $router->get('/files/{id}/thumb', [FileController::class, 'download']);
 
+// Search route
+$router->get('/search', [SearchController::class, 'index']);
+
 // Set custom 404 handler
 $router->setNotFoundHandler(function (Request $request) {
-    $path = htmlspecialchars($request->getPath());
-    $appName = Config::getAppName();
-    
-    return <<<HTML
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 Not Found - {$appName}</title>
-    <link rel="stylesheet" href="/assets/css/app.css">
-</head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="text-center">
-        <h1 class="text-8xl font-bold text-gray-300">404</h1>
-        <h2 class="text-2xl font-semibold text-gray-700 mt-4">Page Not Found</h2>
-        <p class="text-gray-500 mt-2">The page <code class="bg-gray-200 px-2 py-1 rounded">{$path}</code> doesn't exist.</p>
-        <a href="/" class="inline-block mt-6 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-            Return Home
-        </a>
-    </div>
-</body>
-</html>
-HTML;
+    $path = $request->getPath();
+    $view = new \Worlds\Config\View();
+
+    http_response_code(404);
+
+    return $view->render('errors/404', [
+        'path' => $path,
+        'message' => 'The page you\'re looking for doesn\'t exist or has been moved.'
+    ]);
 });
 
 // Create request from current HTTP request

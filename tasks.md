@@ -1645,7 +1645,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 21: Search
 
 ### 21.1 Create SearchController class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Handle search requests
 - **Acceptance criteria:**
   - Accepts search query
@@ -1653,7 +1653,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/SearchController.php`
 
 ### 21.2 Implement global search action
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Search all entities
 - **Acceptance criteria:**
   - Searches by name
@@ -1662,7 +1662,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/SearchController.php`
 
 ### 21.3 Create search results template
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Display search results
 - **Acceptance criteria:**
   - Shows matching entities
@@ -1670,7 +1670,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/search/results.php`
 
 ### 21.4 Add entity type filter
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Filter results by type
 - **Acceptance criteria:**
   - Shows type checkboxes
@@ -1678,7 +1678,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/search/results.php`
 
 ### 21.5 Create search bar component
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build header search input
 - **Acceptance criteria:**
   - Shows in header
@@ -1686,7 +1686,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/partials/search-bar.php`
 
 ### 21.6 Implement live search
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Show results as user types
 - **Acceptance criteria:**
   - Debounces input
@@ -1698,7 +1698,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 22: Error Handling
 
 ### 22.1 Create 404 error template
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build not found page
 - **Acceptance criteria:**
   - Shows friendly message
@@ -1706,7 +1706,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/errors/404.php`
 
 ### 22.2 Create 500 error template
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build server error page
 - **Acceptance criteria:**
   - Shows friendly message
@@ -1714,7 +1714,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/errors/500.php`
 
 ### 22.3 Implement global exception handler
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Catch unhandled exceptions
 - **Acceptance criteria:**
   - Logs error details
@@ -1722,7 +1722,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/ErrorHandler.php`
 
 ### 22.4 Implement error logging
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Write errors to log file
 - **Acceptance criteria:**
   - Logs exception message
@@ -1731,7 +1731,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/ErrorHandler.php`
 
 ### 22.5 Implement CSRF protection
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Validate form tokens
 - **Acceptance criteria:**
   - Generates token per session
@@ -1744,7 +1744,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 23: Testing
 
 ### 23.1 Set up PHPUnit configuration
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Configure test framework
 - **Acceptance criteria:**
   - Creates phpunit.xml
@@ -1752,7 +1752,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `phpunit.xml`
 
 ### 23.2 Create test database helper
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Set up test database
 - **Acceptance criteria:**
   - Creates in-memory database
@@ -1761,7 +1761,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `tests/TestCase.php`
 
 ### 23.3 Write EntityRepository tests
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Test entity CRUD
 - **Acceptance criteria:**
   - Tests create
@@ -1771,7 +1771,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `tests/EntityRepositoryTest.php`
 
 ### 23.4 Write authentication tests
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Test auth functions
 - **Acceptance criteria:**
   - Tests login
@@ -1780,7 +1780,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `tests/AuthTest.php`
 
 ### 23.5 Write router tests
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Test URL routing
 - **Acceptance criteria:**
   - Tests route matching
@@ -1788,7 +1788,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `tests/RouterTest.php`
 
 ### 23.6 Write search tests
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Test FTS5 search
 - **Acceptance criteria:**
   - Tests basic search
@@ -1800,7 +1800,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 24: Documentation
 
 ### 24.1 Update README.md
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Write project overview
 - **Acceptance criteria:**
   - Describes project purpose
@@ -1809,7 +1809,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `README.md`
 
 ### 24.2 Create INSTALL.md
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Write setup instructions
 - **Acceptance criteria:**
   - Lists prerequisites
@@ -1818,7 +1818,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `INSTALL.md`
 
 ### 24.3 Create DOCKER.md
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Write Docker instructions
 - **Acceptance criteria:**
   - Documents container build
@@ -1827,7 +1827,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `DOCKER.md`
 
 ### 24.4 Create CONTRIBUTING.md
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Write contribution guide
 - **Acceptance criteria:**
   - Documents code style
@@ -1835,7 +1835,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `CONTRIBUTING.md`
 
 ### 24.5 Document environment variables
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** List configuration options
 - **Acceptance criteria:**
   - Documents each variable
@@ -1843,7 +1843,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `.env.example`
 
 ### 24.6 Document entity JSON schemas
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Explain entity data fields
 - **Acceptance criteria:**
   - Lists all entity types
