@@ -1274,7 +1274,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 15: Markdown Processing
 
 ### 15.1 Install Parsedown library
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Add Markdown parser dependency
 - **Acceptance criteria:**
   - Added to composer.json
@@ -1282,7 +1282,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `composer.json`
 
 ### 15.2 Create Markdown wrapper class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement custom Markdown parser
 - **Acceptance criteria:**
   - Extends Parsedown
@@ -1290,7 +1290,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Markdown.php`
 
 ### 15.3 Implement mention detection
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Parse @[entity:id] syntax
 - **Acceptance criteria:**
   - Detects mention pattern
@@ -1298,7 +1298,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Markdown.php`
 
 ### 15.4 Implement mention replacement
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Convert mentions to links
 - **Acceptance criteria:**
   - Replaces with entity link
@@ -1306,7 +1306,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Markdown.php`
 
 ### 15.5 Create tooltip component
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build entity preview tooltip
 - **Acceptance criteria:**
   - Shows entity name
@@ -1315,7 +1315,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/partials/tooltip.php`
 
 ### 15.6 Add Alpine.js tooltip logic
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement tooltip display
 - **Acceptance criteria:**
   - Shows on hover
@@ -1324,7 +1324,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `public/assets/js/app.js`
 
 ### 15.7 Integrate Markdown editor
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Add rich text editor
 - **Acceptance criteria:**
   - Shows formatting toolbar
@@ -1336,7 +1336,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 16: Relations System
 
 ### 16.1 Create RelationRepository class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement relation database access
 - **Acceptance criteria:**
   - Provides CRUD methods
@@ -1344,7 +1344,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/RelationRepository.php`
 
 ### 16.2 Implement findByEntity method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Get entity relations
 - **Acceptance criteria:**
   - Finds outgoing relations
@@ -1352,7 +1352,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/RelationRepository.php`
 
 ### 16.3 Implement relation creation
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Create new relation
 - **Acceptance criteria:**
   - Creates primary relation
@@ -1360,7 +1360,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/RelationRepository.php`
 
 ### 16.4 Implement relation deletion
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Remove relation
 - **Acceptance criteria:**
   - Removes primary relation
@@ -1368,7 +1368,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/RelationRepository.php`
 
 ### 16.5 Create RelationController class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Handle relation requests
 - **Acceptance criteria:**
   - Implements CRUD actions
@@ -1376,7 +1376,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/RelationController.php`
 
 ### 16.6 Create relation list partial
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Display entity relations
 - **Acceptance criteria:**
   - Groups by relation type
@@ -1384,7 +1384,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/partials/relations.php`
 
 ### 16.7 Create relation form modal
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build relation editor
 - **Acceptance criteria:**
   - Has target entity selector
@@ -1396,7 +1396,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 17: Tags System
 
 ### 17.1 Create TagRepository class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement tag database access
 - **Acceptance criteria:**
   - Provides CRUD methods
@@ -1404,7 +1404,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/TagRepository.php`
 
 ### 17.2 Implement tag CRUD methods
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Create tag operations
 - **Acceptance criteria:**
   - Implements create method
@@ -1413,7 +1413,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/TagRepository.php`
 
 ### 17.3 Implement attachToEntity method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Link tag to entity
 - **Acceptance criteria:**
   - Creates junction record
@@ -1421,14 +1421,14 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/TagRepository.php`
 
 ### 17.4 Implement detachFromEntity method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Unlink tag from entity
 - **Acceptance criteria:**
   - Removes junction record
 - **Files:** `src/Repositories/TagRepository.php`
 
 ### 17.5 Create TagController class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Handle tag requests
 - **Acceptance criteria:**
   - Implements tag management page
@@ -1436,7 +1436,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/TagController.php`
 
 ### 17.6 Create tag picker component
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build tag selector UI
 - **Acceptance criteria:**
   - Shows available tags
@@ -1445,7 +1445,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/partials/tag-picker.php`
 
 ### 17.7 Create tag badge component
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Display single tag
 - **Acceptance criteria:**
   - Shows tag name

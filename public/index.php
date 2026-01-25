@@ -35,6 +35,8 @@ use Worlds\Config\Request;
 use Worlds\Controllers\AuthController;
 use Worlds\Controllers\CampaignController;
 use Worlds\Controllers\EntityController;
+use Worlds\Controllers\TagController;
+use Worlds\Controllers\RelationController;
 
 // Load environment configuration
 Config::load();
@@ -175,6 +177,22 @@ $router->get('/entities/{type}/{id}', [EntityController::class, 'show']);
 $router->get('/entities/{type}/{id}/edit', [EntityController::class, 'edit']);
 $router->put('/entities/{type}/{id}', [EntityController::class, 'update']);
 $router->delete('/entities/{type}/{id}', [EntityController::class, 'destroy']);
+
+// Tag routes
+$router->get('/tags', [TagController::class, 'index']);
+$router->post('/tags', [TagController::class, 'store']);
+$router->put('/tags/{id}', [TagController::class, 'update']);
+$router->delete('/tags/{id}', [TagController::class, 'destroy']);
+
+// Entity-Tag association routes (API endpoints)
+$router->post('/api/entities/{id}/tags', [TagController::class, 'attach']);
+$router->delete('/api/entities/{id}/tags/{tagId}', [TagController::class, 'detach']);
+
+// Relation routes (API endpoints)
+$router->get('/api/entities/{id}/relations', [RelationController::class, 'index']);
+$router->post('/api/entities/{id}/relations', [RelationController::class, 'store']);
+$router->put('/api/relations/{id}', [RelationController::class, 'update']);
+$router->delete('/api/relations/{id}', [RelationController::class, 'destroy']);
 
 // Set custom 404 handler
 $router->setNotFoundHandler(function (Request $request) {
