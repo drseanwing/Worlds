@@ -1171,7 +1171,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 14: UI Templates
 
 ### 14.1 Create base layout template
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build main page structure
 - **Acceptance criteria:**
   - Defines HTML doctype
@@ -1181,7 +1181,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/layouts/base.php`
 
 ### 14.2 Create header component
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build page header
 - **Acceptance criteria:**
   - Shows application name
@@ -1190,7 +1190,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/partials/header.php`
 
 ### 14.3 Create sidebar component
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build navigation sidebar
 - **Acceptance criteria:**
   - Lists entity types
@@ -1199,7 +1199,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/partials/sidebar.php`
 
 ### 14.4 Create footer component
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build page footer
 - **Acceptance criteria:**
   - Shows version info
@@ -1207,7 +1207,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/partials/footer.php`
 
 ### 14.5 Create flash message component
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Display notification messages
 - **Acceptance criteria:**
   - Shows success messages
@@ -1216,7 +1216,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/partials/flash.php`
 
 ### 14.6 Create breadcrumb component
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Show navigation path
 - **Acceptance criteria:**
   - Shows page hierarchy
@@ -1224,7 +1224,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/partials/breadcrumb.php`
 
 ### 14.7 Create entity list template
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build entity listing page
 - **Acceptance criteria:**
   - Shows grid of entity cards
@@ -1233,7 +1233,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/entities/index.php`
 
 ### 14.8 Create entity card component
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build entity preview card
 - **Acceptance criteria:**
   - Shows entity image
@@ -1242,7 +1242,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/partials/entity-card.php`
 
 ### 14.9 Create entity detail template
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build entity view page
 - **Acceptance criteria:**
   - Shows entity header
@@ -1252,7 +1252,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/entities/show.php`
 
 ### 14.10 Create entity form template
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build entity edit form
 - **Acceptance criteria:**
   - Shows name field
@@ -1261,7 +1261,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Views/entities/form.php`
 
 ### 14.11 Create dashboard template
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Build main dashboard page
 - **Acceptance criteria:**
   - Shows campaign summary

@@ -106,6 +106,50 @@ $router->get('/', function (Request $request) {
 HTML;
 });
 
+// Dashboard route
+$router->get('/dashboard', function (Request $request) {
+    // Require authentication
+    if (!\Worlds\Config\Auth::check()) {
+        return \Worlds\Config\Response::redirect('/login');
+    }
+
+    $view = new \Worlds\Config\View();
+
+    // Get active campaign info
+    $campaignId = \Worlds\Config\Auth::getActiveCampaignId();
+    $campaign = null;
+    $entities = [];
+    $stats = ['characters' => 0, 'locations' => 0, 'quests' => 0, 'total' => 0];
+
+    if ($campaignId) {
+        $campaignRepo = new \Worlds\Repositories\CampaignRepository();
+        $campaign = $campaignRepo->findById($campaignId);
+
+        $entityRepo = new \Worlds\Repositories\EntityRepository();
+        // Get recent entities
+        $entities = $entityRepo->findByCampaign($campaignId, 1, 6)['data'] ?? [];
+
+        // Simple stats (counts by type)
+        $pdo = \Worlds\Config\Database::getInstance();
+        $stmt = $pdo->prepare("SELECT entity_type, COUNT(*) as count FROM entities WHERE campaign_id = ? GROUP BY entity_type");
+        $stmt->execute([$campaignId]);
+        $typeCounts = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+
+        $stats = [
+            'characters' => $typeCounts['character'] ?? 0,
+            'locations' => $typeCounts['location'] ?? 0,
+            'quests' => $typeCounts['quest'] ?? 0,
+            'total' => array_sum($typeCounts)
+        ];
+    }
+
+    return \Worlds\Config\Response::html($view->render('dashboard', [
+        'campaign' => $campaign,
+        'entities' => $entities,
+        'stats' => $stats
+    ]));
+});
+
 // Auth routes
 $router->get('/login', [AuthController::class, 'showLoginForm']);
 $router->post('/login', [AuthController::class, 'login']);
