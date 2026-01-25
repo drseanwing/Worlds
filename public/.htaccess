@@ -1,0 +1,45 @@
+# Enable rewrite engine
+RewriteEngine On
+
+# Set the base directory for rewrites (adjust if in subdirectory)
+# RewriteBase /
+
+# Don't rewrite existing files
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Don't rewrite existing directories
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Route all other requests to index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Security: Deny access to .env files
+<FilesMatch "^\.env">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Security: Deny access to .htaccess
+<Files ".htaccess">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Set UTF-8 encoding
+AddDefaultCharset UTF-8
+
+# Enable GZIP compression for common file types
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/json application/javascript text/javascript application/xml
+</IfModule>
+
+# Set caching headers for static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+</IfModule>
