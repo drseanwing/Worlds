@@ -33,6 +33,7 @@ use Worlds\Config\Database;
 use Worlds\Config\Router;
 use Worlds\Config\Request;
 use Worlds\Controllers\AuthController;
+use Worlds\Controllers\CampaignController;
 use Worlds\Controllers\EntityController;
 
 // Load environment configuration
@@ -111,6 +112,16 @@ $router->post('/login', [AuthController::class, 'login']);
 $router->get('/register', [AuthController::class, 'showRegisterForm']);
 $router->post('/register', [AuthController::class, 'register']);
 $router->post('/logout', [AuthController::class, 'logout']);
+
+// Campaign routes
+$router->get('/campaigns', [CampaignController::class, 'index']);
+$router->get('/campaigns/create', [CampaignController::class, 'create']);
+$router->post('/campaigns', [CampaignController::class, 'store']);
+$router->get('/campaigns/{id}', [CampaignController::class, 'show']);
+$router->get('/campaigns/{id}/edit', [CampaignController::class, 'edit']);
+$router->put('/campaigns/{id}', [CampaignController::class, 'update']);
+$router->delete('/campaigns/{id}', [CampaignController::class, 'destroy']);
+$router->post('/campaigns/{id}/switch', [CampaignController::class, 'switchCampaign']);
 
 // Entity routes - {type} is the entity type (character, location, etc.)
 $router->get('/entities/{type}', [EntityController::class, 'index']);

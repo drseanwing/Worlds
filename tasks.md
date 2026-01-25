@@ -1101,7 +1101,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 13: Campaign Management
 
 ### 13.1 Create CampaignRepository class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement campaign database access
 - **Acceptance criteria:**
   - Provides CRUD methods
@@ -1109,7 +1109,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/CampaignRepository.php`
 
 ### 13.2 Implement campaign CRUD methods
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Create campaign data operations
 - **Acceptance criteria:**
   - Implements create method
@@ -1118,7 +1118,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/CampaignRepository.php`
 
 ### 13.3 Create CampaignController class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Handle campaign requests
 - **Acceptance criteria:**
   - Lists user campaigns
@@ -1126,7 +1126,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/CampaignController.php`
 
 ### 13.4 Implement campaign listing
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Display campaign list
 - **Acceptance criteria:**
   - Shows all user campaigns
@@ -1134,7 +1134,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/CampaignController.php`
 
 ### 13.5 Implement campaign creation
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Create new campaign
 - **Acceptance criteria:**
   - Accepts campaign name
@@ -1143,7 +1143,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/CampaignController.php`
 
 ### 13.6 Implement campaign switching
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Change active campaign
 - **Acceptance criteria:**
   - Updates session
@@ -1151,7 +1151,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Controllers/CampaignController.php`
 
 ### 13.7 Store active campaign in session
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Track current campaign
 - **Acceptance criteria:**
   - Stores campaign_id in session
@@ -1159,7 +1159,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Config/Auth.php`
 
 ### 13.8 Register campaign routes
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Define campaign URL routes
 - **Acceptance criteria:**
   - Maps /campaigns to list

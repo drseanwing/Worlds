@@ -21,6 +21,11 @@ class Auth
     private const SESSION_USER_DATA = 'auth_user_data';
 
     /**
+     * @var string Session key for active campaign ID
+     */
+    private const SESSION_ACTIVE_CAMPAIGN = 'active_campaign_id';
+
+    /**
      * @var bool Whether session has been started
      */
     private static bool $sessionStarted = false;
@@ -513,6 +518,63 @@ class Auth
         session_regenerate_id(true);
 
         return true;
+    }
+
+    /**
+     * Get the active campaign ID from session
+     *
+     * @return int|null Campaign ID or null if no active campaign
+     */
+    public static function getActiveCampaignId(): ?int
+    {
+        self::startSession();
+
+        if (!self::check()) {
+            return null;
+        }
+
+        $campaignId = $_SESSION[self::SESSION_ACTIVE_CAMPAIGN] ?? null;
+
+        return $campaignId !== null ? (int) $campaignId : null;
+    }
+
+    /**
+     * Set the active campaign ID in session
+     *
+     * @param int $campaignId Campaign ID to set as active
+     * @return void
+     */
+    public static function setActiveCampaignId(int $campaignId): void
+    {
+        self::startSession();
+
+        if (!self::check()) {
+            return;
+        }
+
+        $_SESSION[self::SESSION_ACTIVE_CAMPAIGN] = $campaignId;
+    }
+
+    /**
+     * Clear the active campaign ID from session
+     *
+     * @return void
+     */
+    public static function clearActiveCampaignId(): void
+    {
+        self::startSession();
+
+        unset($_SESSION[self::SESSION_ACTIVE_CAMPAIGN]);
+    }
+
+    /**
+     * Check if user has an active campaign
+     *
+     * @return bool True if user has an active campaign, false otherwise
+     */
+    public static function hasActiveCampaign(): bool
+    {
+        return self::getActiveCampaignId() !== null;
     }
 
     /**
