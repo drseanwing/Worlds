@@ -897,7 +897,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 ## Phase 11: Entity Repository
 
 ### 11.1 Create EntityRepository class
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Implement entity database access
 - **Acceptance criteria:**
   - Uses PDO for queries
@@ -905,7 +905,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/EntityRepository.php`
 
 ### 11.2 Implement findById method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Retrieve single entity
 - **Acceptance criteria:**
   - Accepts entity ID
@@ -914,7 +914,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/EntityRepository.php`
 
 ### 11.3 Implement findByType method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** List entities by type
 - **Acceptance criteria:**
   - Accepts entity_type string
@@ -923,7 +923,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/EntityRepository.php`
 
 ### 11.4 Implement findByCampaign method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** List entities in campaign
 - **Acceptance criteria:**
   - Accepts campaign_id
@@ -931,7 +931,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/EntityRepository.php`
 
 ### 11.5 Implement findByParent method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** List child entities
 - **Acceptance criteria:**
   - Accepts parent_id
@@ -939,7 +939,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/EntityRepository.php`
 
 ### 11.6 Implement create method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Insert new entity
 - **Acceptance criteria:**
   - Accepts entity data array
@@ -948,7 +948,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/EntityRepository.php`
 
 ### 11.7 Implement update method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Modify existing entity
 - **Acceptance criteria:**
   - Accepts entity ID
@@ -957,7 +957,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/EntityRepository.php`
 
 ### 11.8 Implement delete method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Remove entity
 - **Acceptance criteria:**
   - Accepts entity ID
@@ -966,7 +966,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/EntityRepository.php`
 
 ### 11.9 Implement search method
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Full-text search entities
 - **Acceptance criteria:**
   - Uses FTS5 MATCH syntax
@@ -974,7 +974,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/EntityRepository.php`
 
 ### 11.10 Implement pagination helper
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Paginate query results
 - **Acceptance criteria:**
   - Accepts page number
@@ -983,7 +983,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `src/Repositories/EntityRepository.php`
 
 ### 11.11 Create FTS5 insert trigger
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Sync FTS on entity insert
 - **Acceptance criteria:**
   - Triggers after INSERT
@@ -991,7 +991,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `database/012_fts_triggers.sql`
 
 ### 11.12 Create FTS5 update trigger
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Sync FTS on entity update
 - **Acceptance criteria:**
   - Triggers after UPDATE
@@ -999,7 +999,7 @@ A granular task list for the Worlds project - a lightweight worldbuilding tool i
 - **Files:** `database/012_fts_triggers.sql`
 
 ### 11.13 Create FTS5 delete trigger
-- [ ] **Status:** Incomplete
+- [x] **Status:** Complete
 - **Description:** Sync FTS on entity delete
 - **Acceptance criteria:**
   - Triggers after DELETE
