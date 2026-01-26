@@ -1,0 +1,51 @@
+# =============================================================================
+# Worlds - Production Docker Compose Configuration
+# =============================================================================
+# Usage:
+#   docker-compose -f docker-compose.prod.yml up -d
+#   docker-compose -f docker-compose.prod.yml down
+# =============================================================================
+
+version: '3.8'
+
+services:
+  worlds:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: worlds-app
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-8080}:80"
+    volumes:
+      # Persist data directory (database and uploads)
+      - worlds-data:/var/www/html/data
+    environment:
+      - DATABASE_PATH=/var/www/html/data/campaign.db
+      - DEBUG_MODE=false
+      - UPLOAD_DIR=/var/www/html/data/uploads
+      - APP_NAME=${APP_NAME:-Worlds}
+      - APP_URL=${APP_URL:-http://localhost:8080}
+      - AUTO_MIGRATE=true
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - worlds-network
+
+networks:
+  worlds-network:
+    driver: bridge
+
+volumes:
+  worlds-data:
+    driver: local

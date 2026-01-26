@@ -1,3 +1,18 @@
+# =============================================================================
+# Worlds - Development Docker Compose Configuration
+# =============================================================================
+# This configuration is optimized for local development with:
+# - Live code reloading via volume mounts
+# - Debug mode enabled
+# - Port 8080 exposed
+#
+# Usage:
+#   docker-compose up        # Start with logs
+#   docker-compose up -d     # Start in background
+#   docker-compose down      # Stop and remove
+#   docker-compose logs -f   # Follow logs
+# =============================================================================
+
 version: '3.8'
 
 services:
@@ -5,22 +20,31 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: worlds-web
+      target: production
+    container_name: worlds-dev
     ports:
       - "8080:80"
     volumes:
       # Mount source code for live development
-      - .:/var/www/html
+      - ./src:/var/www/html/src:ro
+      - ./public:/var/www/html/public:ro
+      - ./database:/var/www/html/database:ro
       # Persist data directory
       - worlds-data:/var/www/html/data
-      # Exclude vendor and node_modules from sync
-      - /var/www/html/vendor
-      - /var/www/html/node_modules
     environment:
       - DATABASE_PATH=/var/www/html/data/campaign.db
       - DEBUG_MODE=true
       - UPLOAD_DIR=/var/www/html/data/uploads
+      - APP_NAME=Worlds
+      - APP_URL=http://localhost:8080
+      - AUTO_MIGRATE=true
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
 volumes:
   worlds-data:
