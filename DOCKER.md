@@ -1,360 +1,397 @@
-# Docker Setup Guide
+# Docker Deployment Guide
 
-Run Worlds using Docker and Docker Compose for consistent development across different machines.
+Complete guide for deploying Worlds using Docker, covering both development and production environments.
 
 ## Prerequisites
 
-- **Docker** - [Install Docker Desktop](https://www.docker.com/products/docker-desktop)
-- **Docker Compose** - Usually included with Docker Desktop
+- **Docker** (v20.10+) - [Install Docker](https://docs.docker.com/get-docker/)
+- **Docker Compose** (v2.0+) - Usually included with Docker Desktop
 
 Verify installation:
 
 ```bash
 docker --version
-docker-compose --version
+docker compose version
 ```
 
-## Quick Start
+## Quick Start (Development)
 
-### 1. Start the Application
-
-From the project root directory, run:
+### 1. Clone and Build
 
 ```bash
-docker-compose up
+git clone <repository-url>
+cd Worlds
 ```
 
-The first run will build the Docker image (may take 1-2 minutes). Subsequent runs start much faster.
+### 2. Start the Application
 
-### 2. Access the Application
+```bash
+docker compose up
+```
 
-Once the containers are running, the application is available at:
+First build takes 2-3 minutes (downloads base images, compiles CSS). Subsequent starts are fast.
+
+### 3. Access the Application
+
+Open your browser to:
 
 ```
 http://localhost:8080
 ```
 
-### 3. Stop the Application
+### 4. Stop the Application
 
-Press `Ctrl+C` in your terminal, or in another terminal run:
-
-```bash
-docker-compose down
-```
-
-## Docker Compose Configuration
-
-The `docker-compose.yml` file defines the application setup:
-
-```yaml
-version: '3.8'
-
-services:
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: worlds-web
-    ports:
-      - "8080:80"
-    volumes:
-      - .:/var/www/html
-      - worlds-data:/var/www/html/data
-      - /var/www/html/vendor
-      - /var/www/html/node_modules
-    environment:
-      - DATABASE_PATH=/var/www/html/data/campaign.db
-      - DEBUG_MODE=true
-      - UPLOAD_DIR=/var/www/html/data/uploads
-    restart: unless-stopped
-
-volumes:
-  worlds-data:
-    driver: local
-```
-
-## Key Docker Components
-
-### Container Configuration
-
-- **Container Name**: `worlds-web`
-- **Port Mapping**: `8080:80` (external:internal)
-- **Web Server**: Apache running inside the container
-- **Auto-restart**: Container restarts unless manually stopped
-
-### Volumes (Persistent Storage)
-
-Volumes ensure data persists even when containers are removed:
-
-| Volume | Purpose |
-|--------|---------|
-| `.:/var/www/html` | Mounts entire project for live development (source code changes instantly visible) |
-| `worlds-data:/var/www/html/data` | Persists application data (database, uploads) across container restarts |
-| `/var/www/html/vendor` | Excludes Composer dependencies from host sync (uses container version) |
-| `/var/www/html/node_modules` | Excludes npm dependencies from host sync (uses container version) |
-
-### Environment Variables
-
-The container runs with these environment variables:
-
-```
-DATABASE_PATH=/var/www/html/data/campaign.db
-DEBUG_MODE=true
-UPLOAD_DIR=/var/www/html/data/uploads
-```
-
-These override the `.env` file settings inside the container.
-
-## Common Docker Tasks
-
-### View Container Logs
+Press `Ctrl+C` or run:
 
 ```bash
-# Show recent logs
-docker-compose logs
-
-# Follow logs in real-time
-docker-compose logs -f
-
-# Show logs from specific service
-docker-compose logs web
+docker compose down
 ```
 
-### Access the Container Shell
+---
+
+## Production Deployment
+
+### Option 1: Using Docker Compose (Recommended)
+
+#### Step 1: Configure Environment
+
+Copy the environment template:
 
 ```bash
-docker-compose exec web bash
+cp .env.docker .env
 ```
 
-Inside the container shell, you can:
+Edit `.env` with your production settings:
 
 ```bash
-# Run Composer commands
-composer install
-composer test
-
-# Run npm commands
-npm install
-npm run build:css
-
-# Manage PHP/MySQL directly
-php -v
+# .env
+HOST_PORT=8080
+APP_NAME=Worlds
+APP_URL=https://your-domain.com
+DEBUG_MODE=false
 ```
 
-### Rebuild the Docker Image
-
-If you modify `Dockerfile`:
+#### Step 2: Build and Deploy
 
 ```bash
-docker-compose build --no-cache
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-Then restart:
+#### Step 3: Verify Deployment
+
+Check container health:
 
 ```bash
-docker-compose up
+docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml logs -f
 ```
 
-### Remove All Docker Data
+### Option 2: Standalone Docker Image
 
-To completely reset (warning: deletes everything):
+#### Build the Image
 
 ```bash
-docker-compose down -v
+docker build -t worlds:latest .
 ```
 
-The `-v` flag removes all volumes. Next `docker-compose up` will create fresh volumes.
-
-### Run One-Time Commands
-
-Execute a command without starting full services:
+#### Run the Container
 
 ```bash
-# Run tests
-docker-compose run web composer test
-
-# Install dependencies
-docker-compose run web composer install
-
-# Build CSS
-docker-compose run web npm run build:css
+docker run -d \
+  --name worlds-app \
+  -p 8080:80 \
+  -v worlds-data:/var/www/html/data \
+  -e APP_NAME=Worlds \
+  -e APP_URL=https://your-domain.com \
+  -e DEBUG_MODE=false \
+  --restart unless-stopped \
+  worlds:latest
 ```
 
-## Development Workflow with Docker
+---
 
-### Making Code Changes
+## Architecture Overview
 
-1. Edit files in your IDE on your host machine
-2. Changes are instantly visible in the running container (due to volume mount)
-3. Refresh your browser to see updates
+### Multi-Stage Build
 
-### Database Persistence
+The Dockerfile uses a three-stage build process:
 
-The database is stored in the `worlds-data` volume:
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Stage 1: frontend-builder (Node.js 20 Alpine)               │
+│ - Installs npm dependencies                                  │
+│ - Compiles Tailwind CSS (minified for production)           │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│ Stage 2: composer-builder (Composer 2)                      │
+│ - Installs PHP dependencies                                  │
+│ - Optimizes autoloader                                       │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│ Stage 3: production (PHP 8.2 + Apache)                      │
+│ - Copies compiled assets from Stage 1                        │
+│ - Copies vendor directory from Stage 2                       │
+│ - Configures Apache with security headers                    │
+│ - Sets up healthcheck and entrypoint scripts                 │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Container Components
+
+| Component | Description |
+|-----------|-------------|
+| **Apache 2.4** | Web server with mod_rewrite enabled |
+| **PHP 8.2** | With PDO SQLite extension |
+| **SQLite** | Embedded database (no external DB required) |
+| **Tailwind CSS** | Pre-compiled during build |
+| **Alpine.js** | Frontend interactivity |
+
+### Volume Mounts
+
+| Volume | Purpose | Persistence |
+|--------|---------|-------------|
+| `worlds-data` | Database and uploads | Named volume (persistent) |
+
+---
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `HOST_PORT` | `8080` | Port exposed on host machine |
+| `APP_NAME` | `Worlds` | Application name in UI |
+| `APP_URL` | `http://localhost:8080` | Public URL for links |
+| `DEBUG_MODE` | `false` | Enable detailed errors (dev only) |
+| `DATABASE_PATH` | `/var/www/html/data/campaign.db` | SQLite database path |
+| `UPLOAD_DIR` | `/var/www/html/data/uploads` | File upload directory |
+
+---
+
+## Common Operations
+
+### View Logs
 
 ```bash
-# The database file is located at
-data/campaign.db
+# Development
+docker compose logs -f
 
-# On your host machine (for backup)
-docker-compose exec web cp data/campaign.db data/campaign.db.backup
+# Production
+docker compose -f docker-compose.prod.yml logs -f
 ```
 
-### Uploading Files
+### Access Container Shell
 
-User-uploaded files are stored in:
+```bash
+# Development
+docker compose exec web bash
 
+# Production
+docker compose -f docker-compose.prod.yml exec worlds bash
 ```
-data/uploads/
+
+### Rebuild After Changes
+
+```bash
+# Development
+docker compose up --build
+
+# Production
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-This directory persists across container restarts via the `worlds-data` volume.
+### Backup Database
 
-## Dockerfile Details
+```bash
+# Copy database from container
+docker compose exec web cat /var/www/html/data/campaign.db > backup.db
 
-The application uses a multi-stage build:
-
-```dockerfile
-# Base image: PHP 8.1 with Apache
-FROM php:8.1-apache
-
-# Install dependencies
-RUN docker-php-ext-install pdo pdo_sqlite
-
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
-
-# Set document root
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-
-# Copy project files
-COPY . /var/www/html/
-WORKDIR /var/www/html
-
-# Install Composer and dependencies
-RUN curl -sS https://getcomposer.org/installer | php && \
-    php composer.phar install && \
-    rm composer.phar
-
-# Install Node.js and build assets
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash && \
-    apt-get install -y nodejs && \
-    npm install && \
-    npm run build:css
+# Or with production compose
+docker compose -f docker-compose.prod.yml exec worlds \
+  cat /var/www/html/data/campaign.db > backup-$(date +%Y%m%d).db
 ```
+
+### Restore Database
+
+```bash
+# Copy database to container
+docker cp backup.db worlds-app:/var/www/html/data/campaign.db
+docker compose restart
+```
+
+### Check Health Status
+
+```bash
+docker inspect --format='{{.State.Health.Status}}' worlds-app
+```
+
+---
+
+## Security Considerations
+
+### Production Checklist
+
+- [ ] Set `DEBUG_MODE=false`
+- [ ] Use HTTPS with reverse proxy (nginx, Traefik, Caddy)
+- [ ] Configure firewall to only expose necessary ports
+- [ ] Set up regular database backups
+- [ ] Monitor container logs for errors
+- [ ] Keep Docker and images updated
+
+### Reverse Proxy Example (nginx)
+
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name your-domain.com;
+
+    ssl_certificate /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
+
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 80;
+    server_name your-domain.com;
+    return 301 https://$server_name$request_uri;
+}
+```
+
+---
 
 ## Troubleshooting
 
+### Container Won't Start
+
+```bash
+# Check logs for errors
+docker compose logs web
+
+# Common causes:
+# - Port 8080 already in use (change HOST_PORT)
+# - Permission issues on data volume
+# - Invalid environment variables
+```
+
 ### Port Already in Use
 
-If port 8080 is already in use:
-
 ```bash
-# Change port in docker-compose.yml
-ports:
-  - "8081:80"  # Use 8081 instead of 8080
-
-# Then restart
-docker-compose up
+# Use a different port
+HOST_PORT=9000 docker compose up
 ```
 
-### Container Exits Immediately
-
-Check logs:
+### Permission Denied Errors
 
 ```bash
-docker-compose logs web
+# Reset volume permissions
+docker compose down -v
+docker compose up
 ```
 
-Common causes:
-- PHP errors in configuration
-- Permission issues on mounted volumes
-- Missing environment variables
+### CSS Not Loading
 
-### Volume Sync Not Working
-
-On Mac/Windows with Docker Desktop:
+The CSS is pre-compiled during Docker build. If styles are missing:
 
 ```bash
-# Restart Docker
-docker-compose down
-docker system prune -a
-docker-compose up
+# Rebuild without cache
+docker compose build --no-cache
+docker compose up
 ```
 
-### Build Failures
-
-If the Docker image won't build:
+### Database Errors
 
 ```bash
-# Clear build cache and rebuild
-docker-compose build --no-cache --pull
+# Check database file exists
+docker compose exec web ls -la /var/www/html/data/
 
-# Check for Dockerfile syntax errors
-docker build --progress=plain .
+# Check file permissions
+docker compose exec web stat /var/www/html/data/campaign.db
 ```
 
-### Accessing Uploaded Files
-
-Files uploaded through the web interface are in:
+### Health Check Failing
 
 ```bash
-# View files from host
-ls -la data/uploads/
+# Test health check manually
+docker compose exec web /usr/local/bin/healthcheck.sh
 
-# View files from inside container
-docker-compose exec web ls -la /var/www/html/data/uploads/
+# Check Apache is running
+docker compose exec web pgrep -x apache2
 ```
 
-## Production Considerations
+---
 
-This Docker setup is optimized for **development**. For production:
+## Complete Reset
 
-1. Set `DEBUG_MODE=false`
-2. Use environment-specific configuration
-3. Set up proper logging
-4. Configure health checks
-5. Use a production-grade database (PostgreSQL, MySQL)
-6. Implement proper backup strategies
-7. Use environment secrets instead of `.env` files
-8. Configure HTTPS/SSL
-9. Set up monitoring and alerting
-
-See documentation or contact the maintainer for production deployment guidance.
-
-## Useful Docker Commands Reference
+Remove all containers, volumes, and images:
 
 ```bash
-# Start services in background
-docker-compose up -d
+docker compose down -v --rmi all
+docker compose up --build
+```
 
-# Stop services
-docker-compose down
+---
+
+## Docker Commands Reference
+
+```bash
+# Start (foreground)
+docker compose up
+
+# Start (background)
+docker compose up -d
+
+# Stop
+docker compose down
+
+# Stop and remove volumes
+docker compose down -v
+
+# Rebuild
+docker compose up --build
 
 # View running containers
 docker ps
 
-# View all containers (including stopped)
-docker ps -a
+# View logs
+docker compose logs -f
 
-# View container resource usage
+# Execute command in container
+docker compose exec web <command>
+
+# Copy file from container
+docker cp container:/path/file ./local-file
+
+# View resource usage
 docker stats
-
-# Clean up unused Docker resources
-docker system prune
-
-# Inspect a specific container
-docker inspect worlds-web
-
-# Copy file from container to host
-docker cp worlds-web:/var/www/html/file.txt ./file.txt
-
-# Copy file from host to container
-docker cp ./file.txt worlds-web:/var/www/html/file.txt
 ```
+
+---
+
+## Files Reference
+
+| File | Purpose |
+|------|---------|
+| `Dockerfile` | Multi-stage build definition |
+| `docker-compose.yml` | Development orchestration |
+| `docker-compose.prod.yml` | Production orchestration |
+| `.dockerignore` | Build context exclusions |
+| `.env.docker` | Environment template |
+| `docker/apache.conf` | Apache virtual host config |
+| `docker/docker-entrypoint.sh` | Container initialization |
+| `docker/healthcheck.sh` | Health check script |
+
+---
 
 ## Next Steps
 
-- See [INSTALL.md](INSTALL.md) for native installation (without Docker)
-- Review [README.md](README.md) for project overview
-- Check [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines
+- See [README.md](README.md) for project overview
+- See [INSTALL.md](INSTALL.md) for native installation
+- See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines
