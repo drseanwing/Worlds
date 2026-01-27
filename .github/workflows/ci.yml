@@ -39,7 +39,7 @@ jobs:
           echo "✅ All PHP files have valid syntax."
 
       - name: Run PHPUnit tests
-        run: vendor/bin/phpunit --verbose --testdox
+        run: vendor/bin/phpunit --testdox
 
   build:
     name: Build Assets
