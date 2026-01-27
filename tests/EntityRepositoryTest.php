@@ -335,7 +335,7 @@ class EntityRepositoryTest extends TestCase
 
         // Create parent entity
         $stmt = self::$db->prepare('
-            INSERT INTO entities (campaign_id, type, name, parent_id)
+            INSERT INTO entities (campaign_id, entity_type, name, parent_id)
             VALUES (?, ?, ?, ?)
         ');
         $stmt->execute([$campaignId, 'location', 'Parent Location', null]);

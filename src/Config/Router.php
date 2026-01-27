@@ -241,14 +241,69 @@ class Router
 
     /**
      * Call a route handler with parameters
-     * 
+     *
+     * Uses reflection to properly bind route parameters to controller method parameters.
+     * The first parameter is always the Request object, followed by route parameters
+     * matched by name to the method signature.
+     *
      * @param callable $callback Route handler callback
      * @param array<string, string> $params Extracted route parameters
      * @return mixed Result from handler
      */
     private function callHandler(callable $callback, array $params): mixed
     {
-        return call_user_func($callback, $this->request, $params);
+        // Get reflection for the callback to inspect parameters
+        if (is_array($callback)) {
+            $reflection = new \ReflectionMethod($callback[0], $callback[1]);
+        } elseif ($callback instanceof \Closure) {
+            $reflection = new \ReflectionFunction($callback);
+        } else {
+            // String callable like 'ClassName::method'
+            $reflection = new \ReflectionFunction(\Closure::fromCallable($callback));
+        }
+
+        // Build arguments array based on method signature
+        $args = [];
+        $parameters = $reflection->getParameters();
+
+        foreach ($parameters as $parameter) {
+            $paramName = $parameter->getName();
+            $paramType = $parameter->getType();
+
+            // First parameter is typically Request
+            if ($paramType instanceof \ReflectionNamedType && $paramType->getName() === Request::class) {
+                $args[] = $this->request;
+                continue;
+            }
+
+            // Check if this parameter name matches a route parameter
+            if (isset($params[$paramName])) {
+                $value = $params[$paramName];
+
+                // Cast to the expected type if type hint exists
+                if ($paramType instanceof \ReflectionNamedType) {
+                    $typeName = $paramType->getName();
+                    $value = match ($typeName) {
+                        'int' => (int) $value,
+                        'float' => (float) $value,
+                        'bool' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
+                        'string' => (string) $value,
+                        default => $value,
+                    };
+                }
+
+                $args[] = $value;
+            } elseif ($parameter->isDefaultValueAvailable()) {
+                // Use default value if parameter not in route
+                $args[] = $parameter->getDefaultValue();
+            } elseif ($parameter->allowsNull()) {
+                // Use null if parameter is nullable
+                $args[] = null;
+            }
+            // If parameter is required but not provided, PHP will throw an error
+        }
+
+        return call_user_func_array($callback, $args);
     }
 
     /**

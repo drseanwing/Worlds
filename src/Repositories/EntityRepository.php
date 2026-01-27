@@ -399,9 +399,9 @@ class EntityRepository
         // Remove special FTS5 operators and quotes for basic search
         $query = trim($query);
 
-        // If query contains only special characters, return wildcard
+        // If query contains only special characters, return empty phrase
         if (empty($query)) {
-            return '*';
+            return '""';
         }
 
         // Escape double quotes

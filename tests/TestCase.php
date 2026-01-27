@@ -43,61 +43,71 @@ abstract class TestCase extends PHPUnitTestCase
 
     /**
      * Run database migrations
+     *
+     * Schema matches production migrations in database/ directory
      */
     protected static function runMigrations(): void
     {
-        // Users table
+        // Users table (matches 009_users.sql)
         self::$db->exec('
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                email VARCHAR(255) NOT NULL UNIQUE,
-                password VARCHAR(255) NOT NULL,
+                username TEXT NOT NULL UNIQUE,
+                email TEXT UNIQUE,
+                password_hash TEXT NOT NULL,
+                display_name TEXT,
+                is_admin INTEGER DEFAULT 0,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         ');
 
-        // Campaigns table
+        // Campaigns table (matches 001_campaigns.sql)
         self::$db->exec('
             CREATE TABLE IF NOT EXISTS campaigns (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                title VARCHAR(255) NOT NULL,
+                name TEXT NOT NULL,
                 description TEXT,
+                settings TEXT DEFAULT \'{}\',
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         ');
 
-        // Entities table
+        // Entities table (matches 002_entities.sql)
         self::$db->exec('
             CREATE TABLE IF NOT EXISTS entities (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 campaign_id INTEGER NOT NULL,
-                type VARCHAR(50) NOT NULL,
-                name VARCHAR(255) NOT NULL,
-                description TEXT,
+                entity_type TEXT NOT NULL,
+                name TEXT NOT NULL,
+                type TEXT,
+                entry TEXT,
+                image_path TEXT,
+                parent_id INTEGER,
+                is_private INTEGER DEFAULT 0,
+                data TEXT DEFAULT \'{}\',
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE
+                FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE,
+                FOREIGN KEY (parent_id) REFERENCES entities(id) ON DELETE SET NULL
             )
         ');
 
-        // Tags table
+        // Tags table (matches 004_tags.sql)
         self::$db->exec('
             CREATE TABLE IF NOT EXISTS tags (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 campaign_id INTEGER NOT NULL,
-                name VARCHAR(100) NOT NULL,
-                color VARCHAR(7),
+                name TEXT NOT NULL,
+                colour TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE
             )
         ');
 
-        // Entity Tags junction table
+        // Entity Tags junction table (matches 005_entity_tags.sql)
         self::$db->exec('
             CREATE TABLE IF NOT EXISTS entity_tags (
                 entity_id INTEGER NOT NULL,
@@ -108,15 +118,16 @@ abstract class TestCase extends PHPUnitTestCase
             )
         ');
 
-        // Relations table
+        // Relations table (matches 003_relations.sql)
         self::$db->exec('
             CREATE TABLE IF NOT EXISTS relations (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 campaign_id INTEGER NOT NULL,
                 source_entity_id INTEGER NOT NULL,
                 target_entity_id INTEGER NOT NULL,
-                type VARCHAR(100) NOT NULL,
+                relation_type TEXT NOT NULL,
                 description TEXT,
+                is_bidirectional INTEGER DEFAULT 0,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE,
@@ -125,46 +136,62 @@ abstract class TestCase extends PHPUnitTestCase
             )
         ');
 
-        // Attributes table
+        // Attributes table (matches 006_attributes.sql)
         self::$db->exec('
             CREATE TABLE IF NOT EXISTS attributes (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 entity_id INTEGER NOT NULL,
-                key VARCHAR(100) NOT NULL,
+                name TEXT NOT NULL,
                 value TEXT,
+                attribute_type TEXT DEFAULT \'text\',
+                is_private INTEGER DEFAULT 0,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (entity_id) REFERENCES entities(id) ON DELETE CASCADE
             )
         ');
 
-        // Posts table
+        // Posts table (matches 007_posts.sql)
         self::$db->exec('
             CREATE TABLE IF NOT EXISTS posts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                entity_id INTEGER,
                 campaign_id INTEGER NOT NULL,
-                title VARCHAR(255) NOT NULL,
-                content TEXT NOT NULL,
+                title TEXT NOT NULL,
+                content TEXT,
+                is_private INTEGER DEFAULT 0,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (entity_id) REFERENCES entities(id) ON DELETE CASCADE,
                 FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE
             )
         ');
 
-        // Files table
+        // Files table (matches 008_files.sql)
         self::$db->exec('
             CREATE TABLE IF NOT EXISTS files (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 entity_id INTEGER,
                 campaign_id INTEGER NOT NULL,
-                filename VARCHAR(255) NOT NULL,
-                filepath VARCHAR(500) NOT NULL,
-                mime_type VARCHAR(100),
+                filename TEXT NOT NULL,
+                path TEXT NOT NULL,
+                mime_type TEXT,
                 size INTEGER,
+                description TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (entity_id) REFERENCES entities(id) ON DELETE SET NULL,
                 FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE
+            )
+        ');
+
+        // FTS5 virtual table for full-text search (matches 010_fts.sql)
+        self::$db->exec('
+            CREATE VIRTUAL TABLE IF NOT EXISTS entities_fts USING fts5(
+                name,
+                entry,
+                content=\'entities\',
+                content_rowid=\'id\'
             )
         ');
     }
@@ -175,12 +202,12 @@ abstract class TestCase extends PHPUnitTestCase
     protected static function cleanDatabase(): void
     {
         // Delete all data while preserving schema
+        // Order matters due to foreign key constraints
         self::$db->exec('DELETE FROM entity_tags');
         self::$db->exec('DELETE FROM files');
         self::$db->exec('DELETE FROM posts');
         self::$db->exec('DELETE FROM attributes');
         self::$db->exec('DELETE FROM relations');
-        self::$db->exec('DELETE FROM entity_tags');
         self::$db->exec('DELETE FROM tags');
         self::$db->exec('DELETE FROM entities');
         self::$db->exec('DELETE FROM campaigns');
@@ -197,41 +224,112 @@ abstract class TestCase extends PHPUnitTestCase
 
     /**
      * Insert a test user
+     *
+     * @param string $username Username (unique identifier)
+     * @param string $password Plain text password
+     * @param string|null $email Email address (optional)
+     * @param bool $isAdmin Whether user is admin
+     * @return int User ID
      */
-    protected function createUser(string $email = 'test@example.com', string $password = 'password'): int
-    {
+    protected function createUser(
+        string $username = 'testuser',
+        string $password = 'password',
+        ?string $email = 'test@example.com',
+        bool $isAdmin = false
+    ): int {
         $stmt = self::$db->prepare('
-            INSERT INTO users (email, password)
-            VALUES (?, ?)
+            INSERT INTO users (username, email, password_hash, display_name, is_admin)
+            VALUES (?, ?, ?, ?, ?)
         ');
-        $stmt->execute([$email, password_hash($password, PASSWORD_BCRYPT)]);
-        return self::$db->lastInsertId();
+        $stmt->execute([
+            $username,
+            $email,
+            password_hash($password, PASSWORD_BCRYPT),
+            $username,
+            $isAdmin ? 1 : 0
+        ]);
+        return (int) self::$db->lastInsertId();
     }
 
     /**
      * Insert a test campaign
+     *
+     * @param string $name Campaign name
+     * @param string $description Campaign description
+     * @return int Campaign ID
      */
-    protected function createCampaign(int $userId, string $title = 'Test Campaign', string $description = 'Test Description'): int
+    protected function createCampaign(string $name = 'Test Campaign', string $description = 'Test Description'): int
     {
         $stmt = self::$db->prepare('
-            INSERT INTO campaigns (user_id, title, description)
-            VALUES (?, ?, ?)
+            INSERT INTO campaigns (name, description)
+            VALUES (?, ?)
         ');
-        $stmt->execute([$userId, $title, $description]);
-        return self::$db->lastInsertId();
+        $stmt->execute([$name, $description]);
+        return (int) self::$db->lastInsertId();
     }
 
     /**
      * Insert a test entity
+     *
+     * @param int $campaignId Campaign ID
+     * @param string $entityType Entity type (character, location, item, etc.)
+     * @param string $name Entity name
+     * @param string $entry Entity description/entry content
+     * @return int Entity ID
      */
-    protected function createEntity(int $campaignId, string $type = 'character', string $name = 'Test Entity', string $description = 'Test Description'): int
-    {
+    protected function createEntity(
+        int $campaignId,
+        string $entityType = 'character',
+        string $name = 'Test Entity',
+        string $entry = 'Test entry content'
+    ): int {
         $stmt = self::$db->prepare('
-            INSERT INTO entities (campaign_id, type, name, description)
+            INSERT INTO entities (campaign_id, entity_type, name, entry)
             VALUES (?, ?, ?, ?)
         ');
-        $stmt->execute([$campaignId, $type, $name, $description]);
-        return self::$db->lastInsertId();
+        $stmt->execute([$campaignId, $entityType, $name, $entry]);
+        return (int) self::$db->lastInsertId();
+    }
+
+    /**
+     * Insert a test tag
+     *
+     * @param int $campaignId Campaign ID
+     * @param string $name Tag name
+     * @param string $colour Tag colour (hex code)
+     * @return int Tag ID
+     */
+    protected function createTag(int $campaignId, string $name = 'Test Tag', string $colour = '#ff0000'): int
+    {
+        $stmt = self::$db->prepare('
+            INSERT INTO tags (campaign_id, name, colour)
+            VALUES (?, ?, ?)
+        ');
+        $stmt->execute([$campaignId, $name, $colour]);
+        return (int) self::$db->lastInsertId();
+    }
+
+    /**
+     * Insert a test relation between entities
+     *
+     * @param int $campaignId Campaign ID
+     * @param int $sourceEntityId Source entity ID
+     * @param int $targetEntityId Target entity ID
+     * @param string $relationType Type of relation
+     * @return int Relation ID
+     */
+    protected function createRelation(
+        int $campaignId,
+        int $sourceEntityId,
+        int $targetEntityId,
+        string $relationType = 'related_to'
+    ): int {
+        $stmt = self::$db->prepare('
+            INSERT INTO relations (campaign_id, source_entity_id, target_entity_id, relation_type)
+            VALUES (?, ?, ?, ?)
+        ');
+        $stmt->execute([$campaignId, $sourceEntityId, $targetEntityId, $relationType]);
+        return (int) self::$db->lastInsertId();
     }
 
     /**

@@ -43,17 +43,18 @@ class FileController
      * POST /api/entities/{id}/files
      *
      * @param Request $request HTTP request
+     * @param int $id Entity ID from route parameter
      * @return Response JSON response with file ID or error
      */
-    public function store(Request $request): Response
+    public function store(Request $request, int $id): Response
     {
         // Require authentication
         if (!Auth::check()) {
             return Response::json(['error' => 'Unauthorized'], 401);
         }
 
-        // Get entity ID from route parameters
-        $entityId = (int) $request->input('entity_id');
+        // Get entity ID from route parameter
+        $entityId = $id;
         if ($entityId <= 0) {
             return Response::json(['error' => 'Invalid entity ID'], 400);
         }
@@ -112,17 +113,18 @@ class FileController
      * DELETE /api/files/{id}
      *
      * @param Request $request HTTP request
+     * @param int $id File ID from route parameter
      * @return Response JSON response with success or error
      */
-    public function destroy(Request $request): Response
+    public function destroy(Request $request, int $id): Response
     {
         // Require authentication
         if (!Auth::check()) {
             return Response::json(['error' => 'Unauthorized'], 401);
         }
 
-        // Get file ID from route parameters
-        $fileId = (int) $request->input('file_id');
+        // Get file ID from route parameter
+        $fileId = $id;
         if ($fileId <= 0) {
             return Response::json(['error' => 'Invalid file ID'], 400);
         }
@@ -168,9 +170,10 @@ class FileController
      * GET /files/{id}
      *
      * @param Request $request HTTP request
+     * @param int $id File ID from route parameter
      * @return Response File download response
      */
-    public function download(Request $request): Response
+    public function download(Request $request, int $id): Response
     {
         // Authentication check (optional - files could be public)
         // For now, require authentication
@@ -178,8 +181,8 @@ class FileController
             return Response::json(['error' => 'Unauthorized'], 401);
         }
 
-        // Get file ID from route parameters
-        $fileId = (int) $request->input('file_id');
+        // Get file ID from route parameter
+        $fileId = $id;
         if ($fileId <= 0) {
             return Response::error(400, 'Invalid file ID');
         }

@@ -111,8 +111,8 @@ class RouterTest extends TestCase
      */
     public function test_route_with_single_parameter(): void
     {
-        $this->router->get('/user/{id}', function (Request $request, array $params) {
-            return 'User ID: ' . $params['id'];
+        $this->router->get('/user/{id}', function (Request $request, string $id) {
+            return 'User ID: ' . $id;
         });
 
         $request = new Request('GET', '/user/42');
@@ -126,8 +126,8 @@ class RouterTest extends TestCase
      */
     public function test_route_with_multiple_parameters(): void
     {
-        $this->router->get('/campaign/{campaignId}/entity/{entityId}', function (Request $request, array $params) {
-            return sprintf('Campaign: %s, Entity: %s', $params['campaignId'], $params['entityId']);
+        $this->router->get('/campaign/{campaignId}/entity/{entityId}', function (Request $request, string $campaignId, string $entityId) {
+            return sprintf('Campaign: %s, Entity: %s', $campaignId, $entityId);
         });
 
         $request = new Request('GET', '/campaign/10/entity/25');
@@ -141,8 +141,8 @@ class RouterTest extends TestCase
      */
     public function test_parameter_url_decoding(): void
     {
-        $this->router->get('/search/{query}', function (Request $request, array $params) {
-            return 'Query: ' . $params['query'];
+        $this->router->get('/search/{query}', function (Request $request, string $query) {
+            return 'Query: ' . $query;
         });
 
         $request = new Request('GET', '/search/hello%20world');
@@ -296,8 +296,8 @@ class RouterTest extends TestCase
      */
     public function test_route_parameter_cannot_contain_forward_slash(): void
     {
-        $this->router->get('/file/{name}', function (Request $request, array $params) {
-            return 'File: ' . $params['name'];
+        $this->router->get('/file/{name}', function (Request $request, string $name) {
+            return 'File: ' . $name;
         });
 
         // This should NOT match because parameter can't contain /
@@ -373,18 +373,18 @@ class RouterTest extends TestCase
     }
 
     /**
-     * Test route with no parameters receives empty array
+     * Test route with no parameters works correctly
      */
     public function test_route_with_no_parameters_receives_empty_array(): void
     {
-        $this->router->get('/test', function (Request $request, array $params) {
-            return 'Param count: ' . count($params);
+        $this->router->get('/test', function (Request $request) {
+            return 'No params needed';
         });
 
         $request = new Request('GET', '/test');
         $result = $this->router->dispatch($request);
 
-        $this->assertEquals('Param count: 0', $result);
+        $this->assertEquals('No params needed', $result);
     }
 
     /**
@@ -440,8 +440,8 @@ class RouterTest extends TestCase
      */
     public function test_route_parameter_with_numbers(): void
     {
-        $this->router->get('/entity/{id}', function (Request $request, array $params) {
-            return 'ID: ' . $params['id'];
+        $this->router->get('/entity/{id}', function (Request $request, string $id) {
+            return 'ID: ' . $id;
         });
 
         $request = new Request('GET', '/entity/12345');
@@ -455,8 +455,8 @@ class RouterTest extends TestCase
      */
     public function test_route_parameter_with_alphanumeric(): void
     {
-        $this->router->get('/user/{username}', function (Request $request, array $params) {
-            return 'Username: ' . $params['username'];
+        $this->router->get('/user/{username}', function (Request $request, string $username) {
+            return 'Username: ' . $username;
         });
 
         $request = new Request('GET', '/user/john_doe123');
