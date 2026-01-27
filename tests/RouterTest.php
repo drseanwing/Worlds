@@ -141,8 +141,8 @@ class RouterTest extends TestCase
      */
     public function test_parameter_url_decoding(): void
     {
-        $this->router->get('/search/{query}', function (Request $request, array $params) {
-            return 'Query: ' . $params['query'];
+        $this->router->get('/search/{query}', function (Request $request, string $query) {
+            return 'Query: ' . $query;
         });
 
         $request = new Request('GET', '/search/hello%20world');

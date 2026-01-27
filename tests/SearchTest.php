@@ -74,8 +74,9 @@ class SearchTest extends TestCase
 
         self::$db->exec('
             CREATE TRIGGER IF NOT EXISTS entities_fts_update AFTER UPDATE ON entities BEGIN
-                UPDATE entities_fts SET name = new.name, entry = new.entry
-                WHERE rowid = new.id;
+                DELETE FROM entities_fts WHERE rowid = old.id;
+                INSERT INTO entities_fts(rowid, name, entry)
+                VALUES (new.id, new.name, new.entry);
             END
         ');
 

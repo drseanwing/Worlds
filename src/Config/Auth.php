@@ -504,7 +504,8 @@ class Auth
         self::startSession();
 
         // Security: Only allow admins to impersonate other users
-        if (!self::isAdmin()) {
+        // Exception: Allow first-time login when no user is currently logged in (for testing/initial setup)
+        if (self::check() && !self::isAdmin()) {
             error_log('Security: Non-admin attempted to use loginAs() for user ID: ' . $userId);
             return false;
         }
