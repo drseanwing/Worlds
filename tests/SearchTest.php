@@ -91,8 +91,8 @@ class SearchTest extends TestCase
      */
     public function test_search_entities_by_name(): void
     {
-        $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $this->createUser();
+        $campaignId = $this->createCampaign();
 
         // Create test entities
         $this->createEntity($campaignId, 'character', 'Aragorn');
@@ -107,23 +107,23 @@ class SearchTest extends TestCase
     }
 
     /**
-     * Test searching for entities by description
+     * Test searching for entities by entry content
      */
     public function test_search_entities_by_description(): void
     {
-        $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $this->createUser();
+        $campaignId = $this->createCampaign();
 
-        // Create entities with descriptions
+        // Create entities with entry content (markdown description)
         $stmt = self::$db->prepare('
-            INSERT INTO entities (campaign_id, type, name, description)
+            INSERT INTO entities (campaign_id, entity_type, name, entry)
             VALUES (?, ?, ?, ?)
         ');
         $stmt->execute([$campaignId, 'character', 'Character 1', 'A brave warrior']);
         $stmt->execute([$campaignId, 'character', 'Character 2', 'A wise wizard']);
         $stmt->execute([$campaignId, 'location', 'Location 1', 'A dark forest']);
 
-        // Search for "wizard" in description
+        // Search for "wizard" in entry
         $results = $this->repo->search('wizard', $campaignId);
 
         $this->assertGreaterThan(0, count($results));
@@ -134,7 +134,7 @@ class SearchTest extends TestCase
                 break;
             }
         }
-        $this->assertTrue($found, 'Should find entity with "wizard" in description');
+        $this->assertTrue($found, 'Should find entity with "wizard" in entry');
     }
 
     /**
@@ -143,7 +143,7 @@ class SearchTest extends TestCase
     public function test_search_returns_empty_for_no_matches(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         $this->createEntity($campaignId, 'character', 'Test Character');
 
@@ -159,8 +159,8 @@ class SearchTest extends TestCase
     public function test_search_is_campaign_specific(): void
     {
         $userId = $this->createUser();
-        $campaign1Id = $this->createCampaign($userId, 'Campaign 1');
-        $campaign2Id = $this->createCampaign($userId, 'Campaign 2');
+        $campaign1Id = $this->createCampaign('Campaign 1');
+        $campaign2Id = $this->createCampaign('Campaign 2');
 
         // Create entities in different campaigns
         $this->createEntity($campaign1Id, 'character', 'UniqueCharacter');
@@ -183,7 +183,7 @@ class SearchTest extends TestCase
     public function test_search_pagination(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         // Create multiple entities with common search term
         for ($i = 1; $i <= 15; $i++) {
@@ -209,7 +209,7 @@ class SearchTest extends TestCase
     public function test_search_with_special_characters(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         $this->createEntity($campaignId, 'character', "O'Brien");
         $this->createEntity($campaignId, 'location', "King's Landing");
@@ -226,7 +226,7 @@ class SearchTest extends TestCase
     public function test_empty_search_query(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         $this->createEntity($campaignId, 'character', 'Test Character');
 
@@ -242,7 +242,7 @@ class SearchTest extends TestCase
     public function test_search_query_sanitization(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         $this->createEntity($campaignId, 'character', 'Test Character');
 
@@ -259,7 +259,7 @@ class SearchTest extends TestCase
     public function test_search_across_entity_types(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         // Create entities of different types with same search term
         $this->createEntity($campaignId, 'character', 'Dragon Slayer');
@@ -282,7 +282,7 @@ class SearchTest extends TestCase
     public function test_case_insensitive_search(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         $this->createEntity($campaignId, 'character', 'TestCharacter');
 
@@ -303,7 +303,7 @@ class SearchTest extends TestCase
     public function test_search_result_includes_rank(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         $this->createEntity($campaignId, 'character', 'Test Character', 'Test description');
 
@@ -322,7 +322,7 @@ class SearchTest extends TestCase
     public function test_search_partial_word_matching(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         $this->createEntity($campaignId, 'character', 'Adventurer');
 
@@ -339,7 +339,7 @@ class SearchTest extends TestCase
     public function test_multiple_search_terms(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         $this->createEntity($campaignId, 'character', 'Brave Knight', 'A brave and noble knight');
         $this->createEntity($campaignId, 'character', 'Dark Wizard', 'A dark and powerful wizard');
@@ -356,7 +356,7 @@ class SearchTest extends TestCase
     public function test_search_result_data_decoding(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         $id = $this->repo->create([
             'campaign_id' => $campaignId,
@@ -390,7 +390,7 @@ class SearchTest extends TestCase
     public function test_search_respects_per_page_limit(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         // Create 20 entities
         for ($i = 1; $i <= 20; $i++) {
@@ -409,7 +409,7 @@ class SearchTest extends TestCase
     public function test_fts_table_sync_on_update(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         $id = $this->createEntity($campaignId, 'character', 'Old Name');
 
@@ -431,7 +431,7 @@ class SearchTest extends TestCase
     public function test_fts_table_sync_on_delete(): void
     {
         $userId = $this->createUser();
-        $campaignId = $this->createCampaign($userId);
+        $campaignId = $this->createCampaign();
 
         $id = $this->createEntity($campaignId, 'character', 'Deleted Character');
 

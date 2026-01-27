@@ -489,22 +489,41 @@ class Auth
     }
 
     /**
-     * Login as a specific user (for testing/admin purposes)
+     * Login as a specific user (admin impersonation)
      *
-     * WARNING: This bypasses password verification. Use with caution.
+     * This method allows administrators to impersonate other users for
+     * support/debugging purposes. Requires the current user to be an admin.
+     *
+     * WARNING: This bypasses password verification. Only available to admins.
      *
      * @param int $userId User ID to log in as
-     * @return bool True on success, false if user doesn't exist
+     * @return bool True on success, false if not admin or user doesn't exist
      */
     public static function loginAs(int $userId): bool
     {
         self::startSession();
+
+        // Security: Only allow admins to impersonate other users
+        if (!self::isAdmin()) {
+            error_log('Security: Non-admin attempted to use loginAs() for user ID: ' . $userId);
+            return false;
+        }
 
         $user = self::getUserById($userId);
 
         if ($user === null) {
             return false;
         }
+
+        // Log the impersonation for audit purposes
+        $adminUser = self::user();
+        error_log(sprintf(
+            'Admin impersonation: Admin "%s" (ID: %d) logged in as "%s" (ID: %d)',
+            $adminUser['username'] ?? 'unknown',
+            $adminUser['id'] ?? 0,
+            $user['username'],
+            $user['id']
+        ));
 
         $_SESSION[self::SESSION_USER_ID] = $user['id'];
         $_SESSION[self::SESSION_USER_DATA] = [

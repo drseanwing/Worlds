@@ -373,18 +373,18 @@ class RouterTest extends TestCase
     }
 
     /**
-     * Test route with no parameters receives empty array
+     * Test route with no parameters works correctly
      */
     public function test_route_with_no_parameters_receives_empty_array(): void
     {
-        $this->router->get('/test', function (Request $request, array $params) {
-            return 'Param count: ' . count($params);
+        $this->router->get('/test', function (Request $request) {
+            return 'No params needed';
         });
 
         $request = new Request('GET', '/test');
         $result = $this->router->dispatch($request);
 
-        $this->assertEquals('Param count: 0', $result);
+        $this->assertEquals('No params needed', $result);
     }
 
     /**
@@ -440,8 +440,8 @@ class RouterTest extends TestCase
      */
     public function test_route_parameter_with_numbers(): void
     {
-        $this->router->get('/entity/{id}', function (Request $request, array $params) {
-            return 'ID: ' . $params['id'];
+        $this->router->get('/entity/{id}', function (Request $request, string $id) {
+            return 'ID: ' . $id;
         });
 
         $request = new Request('GET', '/entity/12345');
@@ -455,8 +455,8 @@ class RouterTest extends TestCase
      */
     public function test_route_parameter_with_alphanumeric(): void
     {
-        $this->router->get('/user/{username}', function (Request $request, array $params) {
-            return 'Username: ' . $params['username'];
+        $this->router->get('/user/{username}', function (Request $request, string $username) {
+            return 'Username: ' . $username;
         });
 
         $request = new Request('GET', '/user/john_doe123');

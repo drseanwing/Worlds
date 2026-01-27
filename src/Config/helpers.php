@@ -404,13 +404,14 @@ if (!function_exists('flash')) {
      * Flash a message to the session
      *
      * Stores a message in the session for one-time display
-     * (typically after redirects).
+     * (typically after redirects). Supports both string messages
+     * and arrays (for validation errors, etc.).
      *
-     * @param string $key Flash message key (e.g., 'success', 'error')
-     * @param string $message Message content
+     * @param string $key Flash message key (e.g., 'success', 'error', 'errors')
+     * @param string|array<string, mixed> $message Message content or array of messages
      * @return void
      */
-    function flash(string $key, string $message): void
+    function flash(string $key, string|array $message): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -425,11 +426,12 @@ if (!function_exists('get_flash')) {
      * Get and remove a flash message
      *
      * Retrieves a flash message and removes it from the session.
+     * Returns string, array, or null depending on what was stored.
      *
      * @param string $key Flash message key
-     * @return string|null Flash message or null if not found
+     * @return string|array<string, mixed>|null Flash message or null if not found
      */
-    function get_flash(string $key): ?string
+    function get_flash(string $key): string|array|null
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
