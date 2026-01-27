@@ -111,8 +111,8 @@ class RouterTest extends TestCase
      */
     public function test_route_with_single_parameter(): void
     {
-        $this->router->get('/user/{id}', function (Request $request, array $params) {
-            return 'User ID: ' . $params['id'];
+        $this->router->get('/user/{id}', function (Request $request, string $id) {
+            return 'User ID: ' . $id;
         });
 
         $request = new Request('GET', '/user/42');
@@ -126,8 +126,8 @@ class RouterTest extends TestCase
      */
     public function test_route_with_multiple_parameters(): void
     {
-        $this->router->get('/campaign/{campaignId}/entity/{entityId}', function (Request $request, array $params) {
-            return sprintf('Campaign: %s, Entity: %s', $params['campaignId'], $params['entityId']);
+        $this->router->get('/campaign/{campaignId}/entity/{entityId}', function (Request $request, string $campaignId, string $entityId) {
+            return sprintf('Campaign: %s, Entity: %s', $campaignId, $entityId);
         });
 
         $request = new Request('GET', '/campaign/10/entity/25');
@@ -296,8 +296,8 @@ class RouterTest extends TestCase
      */
     public function test_route_parameter_cannot_contain_forward_slash(): void
     {
-        $this->router->get('/file/{name}', function (Request $request, array $params) {
-            return 'File: ' . $params['name'];
+        $this->router->get('/file/{name}', function (Request $request, string $name) {
+            return 'File: ' . $name;
         });
 
         // This should NOT match because parameter can't contain /

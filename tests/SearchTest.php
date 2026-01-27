@@ -64,25 +64,35 @@ class SearchTest extends TestCase
             )
         ');
 
-        // Create trigger to keep FTS table in sync with entities table
+        // Create triggers to keep FTS table in sync with entities table
+        // Drop existing triggers first to ensure correct versions are created
+        self::$db->exec('DROP TRIGGER IF EXISTS entities_fts_insert');
+        self::$db->exec('DROP TRIGGER IF EXISTS entities_fts_update');
+        self::$db->exec('DROP TRIGGER IF EXISTS entities_fts_delete');
+
+        // Insert trigger
         self::$db->exec('
-            CREATE TRIGGER IF NOT EXISTS entities_fts_insert AFTER INSERT ON entities BEGIN
+            CREATE TRIGGER entities_fts_insert AFTER INSERT ON entities BEGIN
                 INSERT INTO entities_fts(rowid, name, entry)
                 VALUES (new.id, new.name, new.entry);
             END
         ');
 
+        // Update trigger - use FTS5 special delete syntax for external content tables
         self::$db->exec('
-            CREATE TRIGGER IF NOT EXISTS entities_fts_update AFTER UPDATE ON entities BEGIN
-                DELETE FROM entities_fts WHERE rowid = old.id;
+            CREATE TRIGGER entities_fts_update AFTER UPDATE ON entities BEGIN
+                INSERT INTO entities_fts(entities_fts, rowid, name, entry)
+                VALUES (\'delete\', old.id, old.name, old.entry);
                 INSERT INTO entities_fts(rowid, name, entry)
                 VALUES (new.id, new.name, new.entry);
             END
         ');
 
+        // Delete trigger - use FTS5 special delete syntax for external content tables
         self::$db->exec('
-            CREATE TRIGGER IF NOT EXISTS entities_fts_delete AFTER DELETE ON entities BEGIN
-                DELETE FROM entities_fts WHERE rowid = old.id;
+            CREATE TRIGGER entities_fts_delete AFTER DELETE ON entities BEGIN
+                INSERT INTO entities_fts(entities_fts, rowid, name, entry)
+                VALUES (\'delete\', old.id, old.name, old.entry);
             END
         ');
     }
