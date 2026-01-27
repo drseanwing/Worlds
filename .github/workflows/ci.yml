@@ -29,7 +29,14 @@ jobs:
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
       - name: Check PHP syntax
-        run: find src tests -name "*.php" -exec php -l {} \; | grep -v "No syntax errors"
+        run: |
+          output=$(find src tests -name "*.php" -exec php -l {} \; 2>&1)
+          echo "$output"
+          if echo "$output" | grep -qE "Parse error:|Errors parsing" ; then
+            echo "❌ Syntax errors found!"
+            exit 1
+          fi
+          echo "✅ All PHP files have valid syntax."
 
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit --verbose --testdox
