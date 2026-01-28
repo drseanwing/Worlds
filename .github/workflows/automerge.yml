@@ -256,6 +256,69 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # ─────────────────────────────────────────────────────────
+      # Wait for CI checks to pass before merging
+      # ─────────────────────────────────────────────────────────
+      - name: Wait for CI checks
+        id: ci-check
+        if: steps.merge-check.outputs.has_conflicts == 'false'
+        run: |
+          echo "::group::Waiting for CI checks to pass"
+
+          MAX_WAIT=600  # 10 minutes maximum wait
+          POLL_INTERVAL=30
+          ELAPSED=0
+
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            echo "Checking CI status (elapsed: ${ELAPSED}s)..."
+
+            # Get all check runs for this PR
+            CHECKS=$(gh pr checks $PR_NUMBER --repo ${{ github.repository }} 2>&1) || true
+
+            echo "$CHECKS"
+
+            # Handle case where no CI checks exist
+            if [ -z "$CHECKS" ] || echo "$CHECKS" | grep -q "no checks"; then
+              echo "::warning::No CI checks configured - proceeding with merge"
+              break
+            fi
+
+            # Filter out this workflow (auto-merge) from check results to avoid self-referential wait
+            # and check if any OTHER checks are still pending/in_progress
+            FILTERED_CHECKS=$(echo "$CHECKS" | grep -v "Auto-merge Copilot PRs" || true)
+
+            if echo "$FILTERED_CHECKS" | grep -qE "\bpending\b|\bin_progress\b"; then
+              echo "Some checks still running, waiting ${POLL_INTERVAL}s..."
+              sleep $POLL_INTERVAL
+              ELAPSED=$((ELAPSED + POLL_INTERVAL))
+              continue
+            fi
+
+            # Check if any failed (use word boundaries to avoid matching workflow names)
+            if echo "$FILTERED_CHECKS" | grep -qE "\bfail\b|\berror\b"; then
+              echo "::error::CI checks failed! Not merging."
+              gh pr comment $PR_NUMBER \
+                --repo ${{ github.repository }} \
+                --body "❌ **CI checks failed** - PR not merged automatically.
+
+          Please review the failing checks and fix the issues."
+              exit 1
+            fi
+
+            # All checks passed
+            echo "✅ All CI checks passed!"
+            break
+          done
+
+          if [ $ELAPSED -ge $MAX_WAIT ]; then
+            echo "::error::Timed out waiting for CI checks"
+            exit 1
+          fi
+
+          echo "::endgroup::"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Merge PR
         if: steps.merge-check.outputs.has_conflicts == 'false'
         run: |
