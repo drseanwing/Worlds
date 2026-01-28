@@ -141,11 +141,19 @@ class EntityController
             return Response::error(403, 'Forbidden');
         }
 
+        // Fetch related entities based on entity type
+        $relatedData = $this->fetchRelatedEntities($entity);
+
         // Render show view
         $html = $this->view->render('entities/show', [
             'entity' => $entity,
             'type' => $type,
-            'entityTypeLabel' => EntityTypes::getLabel($type)
+            'entityTypeLabel' => EntityTypes::getLabel($type),
+            'childEntities' => $relatedData['children'] ?? [],
+            'relatedCharacters' => $relatedData['characters'] ?? [],
+            'relatedLocations' => $relatedData['locations'] ?? [],
+            'relatedOrganisations' => $relatedData['organisations'] ?? [],
+            'relatedFamilies' => $relatedData['families'] ?? [],
         ]);
 
         return Response::html($html);
@@ -568,5 +576,116 @@ class EntityController
         }
 
         return $typeSpecificData;
+    }
+
+    /**
+     * Fetch related entities for display on entity detail page
+     *
+     * @param array<string, mixed> $entity The main entity
+     * @return array<string, array> Related entities grouped by type
+     */
+    private function fetchRelatedEntities(array $entity): array
+    {
+        $result = [
+            'children' => [],
+            'characters' => [],
+            'locations' => [],
+            'organisations' => [],
+            'families' => [],
+        ];
+
+        $campaignId = $entity['campaign_id'];
+        $entityId = $entity['id'];
+        $entityType = $entity['entity_type'];
+        $data = $entity['data'] ?? [];
+
+        // Decode JSON data if it's a string
+        if (is_string($data)) {
+            $data = json_decode($data, true) ?? [];
+        }
+
+        // Fetch child entities (entities where parent_id = this entity)
+        $result['children'] = $this->repository->findByParent($entityId, $campaignId);
+
+        // Type-specific related entity fetching
+        switch ($entityType) {
+            case 'location':
+                // Characters at this location
+                if (!empty($entityId)) {
+                    $result['characters'] = $this->repository->findByTypeWithData(
+                        'character', $campaignId, 'location_id', $entityId
+                    );
+                }
+                break;
+
+            case 'character':
+                // Fetch linked race, location, families, organisations by their IDs
+                if (!empty($data['race_id'])) {
+                    $race = $this->repository->findById((int)$data['race_id']);
+                    if ($race) $result['race'] = $race;
+                }
+                if (!empty($data['location_id'])) {
+                    $location = $this->repository->findById((int)$data['location_id']);
+                    if ($location) $result['location'] = $location;
+                }
+                if (!empty($data['family_ids']) && is_array($data['family_ids'])) {
+                    foreach ($data['family_ids'] as $familyId) {
+                        $family = $this->repository->findById((int)$familyId);
+                        if ($family) $result['families'][] = $family;
+                    }
+                }
+                if (!empty($data['organisation_ids']) && is_array($data['organisation_ids'])) {
+                    foreach ($data['organisation_ids'] as $orgId) {
+                        $org = $this->repository->findById((int)$orgId);
+                        if ($org) $result['organisations'][] = $org;
+                    }
+                }
+                break;
+
+            case 'organisation':
+                // Headquarters location
+                if (!empty($data['headquarters_id'])) {
+                    $hq = $this->repository->findById((int)$data['headquarters_id']);
+                    if ($hq) $result['headquarters'] = $hq;
+                }
+                // Leader character
+                if (!empty($data['leader_id'])) {
+                    $leader = $this->repository->findById((int)$data['leader_id']);
+                    if ($leader) $result['leader'] = $leader;
+                }
+                break;
+
+            case 'family':
+                // Family seat location
+                if (!empty($data['seat_location_id'])) {
+                    $seat = $this->repository->findById((int)$data['seat_location_id']);
+                    if ($seat) $result['seat'] = $seat;
+                }
+                break;
+
+            case 'quest':
+                // Quest giver
+                if (!empty($data['giver_id'])) {
+                    $giver = $this->repository->findById((int)$data['giver_id']);
+                    if ($giver) $result['giver'] = $giver;
+                }
+                // Quest locations
+                if (!empty($data['location_ids']) && is_array($data['location_ids'])) {
+                    foreach ($data['location_ids'] as $locId) {
+                        $loc = $this->repository->findById((int)$locId);
+                        if ($loc) $result['locations'][] = $loc;
+                    }
+                }
+                // Quest characters
+                if (!empty($data['character_ids']) && is_array($data['character_ids'])) {
+                    foreach ($data['character_ids'] as $charId) {
+                        $char = $this->repository->findById((int)$charId);
+                        if ($char) $result['characters'][] = $char;
+                    }
+                }
+                break;
+        }
+
+        return $result;
     }
 }

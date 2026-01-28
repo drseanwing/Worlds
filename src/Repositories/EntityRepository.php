@@ -113,24 +113,71 @@ class EntityRepository
      * Find child entities by parent ID
      *
      * @param int $parentId Parent entity ID
+     * @param int|null $campaignId Optional campaign ID to filter by
      * @param int $page Page number (1-based)
      * @param int $perPage Items per page
      * @return array Array of child entities
      */
     public function findByParent(
         int $parentId,
+        ?int $campaignId = null,
         int $page = 1,
         int $perPage = 50
     ): array {
         $offset = ($page - 1) * $perPage;
 
-        $stmt = $this->pdo->prepare('
+        $sql = 'SELECT * FROM entities WHERE parent_id = ?';
+        $params = [$parentId];
+
+        if ($campaignId !== null) {
+            $sql .= ' AND campaign_id = ?';
+            $params[] = $campaignId;
+        }
+
+        $sql .= ' ORDER BY name ASC LIMIT ? OFFSET ?';
+        $params[] = $perPage;
+        $params[] = $offset;
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map([$this, 'decodeEntity'], $results);
+    }
+
+    /**
+     * Find entities by type with specific data field value
+     *
+     * @param string $entityType Entity type to search for
+     * @param int $campaignId Campaign ID to filter by
+     * @param string $dataField JSON field name to search in data column
+     * @param mixed $dataValue Value to match in the JSON field
+     * @param int $page Page number (1-based)
+     * @param int $perPage Items per page
+     * @return array Array of matching entities
+     */
+    public function findByTypeWithData(
+        string $entityType,
+        int $campaignId,
+        string $dataField,
+        $dataValue,
+        int $page = 1,
+        int $perPage = 50
+    ): array {
+        $offset = ($page - 1) * $perPage;
+
+        // Use JSON_EXTRACT to query within JSON data column
+        $stmt = $this->pdo->prepare("
             SELECT * FROM entities
-            WHERE parent_id = ?
+            WHERE entity_type = ?
+            AND campaign_id = ?
+            AND json_extract(data, '$.$dataField') = ?
             ORDER BY name ASC
             LIMIT ? OFFSET ?
-        ');
-        $stmt->execute([$parentId, $perPage, $offset]);
+        ");
+
+        $stmt->execute([$entityType, $campaignId, $dataValue, $perPage, $offset]);
 
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

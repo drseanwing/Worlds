@@ -106,6 +106,20 @@
                 </div>
                 <?php endif; ?>
 
+                <!-- Entity Type-Specific Content -->
+                <?php
+                $entityType = $entity['entity_type'] ?? '';
+                $partialPath = 'partials/entity-types/' . $entityType;
+                $fullPath = __DIR__ . '/../partials/entity-types/' . $entityType . '.php';
+
+                // Include type-specific partial if it exists
+                if (file_exists($fullPath)):
+                ?>
+                <div class="mb-8">
+                    <?php $this->include($partialPath, ['entity' => $entity]) ?>
+                </div>
+                <?php endif; ?>
+
                 <!-- Relations Section (Placeholder) -->
                 <div class="p-8 border-b border-slate-700/50">
                     <h2 class="text-xl font-bold text-gray-300 mb-4 tracking-wide flex items-center">
