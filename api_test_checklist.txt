@@ -1,0 +1,69 @@
+Phase 8: REST API Implementation Checklist
+==========================================
+
+Files Created:
+--------------
+[✓] database/015_api_tokens.sql - API tokens table
+[✓] src/Config/ApiAuth.php - Authentication & rate limiting
+[✓] src/Controllers/ApiController.php - Base API controller
+[✓] src/Controllers/Api/EntitiesApiController.php - Entities CRUD API
+[✓] src/Controllers/Api/SearchApiController.php - Search API
+[✓] src/Controllers/ApiTokenController.php - Token management UI
+[✓] src/Views/settings/api-tokens.php - Token management page
+[✓] API.md - Complete API documentation
+[✓] PHASE_8_IMPLEMENTATION.md - Implementation summary
+
+Files Modified:
+---------------
+[✓] public/index.php - Added API routes
+[✓] database/migrate.sql - Added API tokens migration
+[✓] src/Views/partials/header.php - Added API Tokens menu link
+
+Features Implemented:
+---------------------
+[✓] Token-based authentication (Bearer tokens)
+[✓] Token generation with SHA-256 hashing
+[✓] Token expiration support
+[✓] Rate limiting (100 req/min per token)
+[✓] List entities (GET /api/v1/entities)
+[✓] Get single entity (GET /api/v1/entities/{id})
+[✓] Create entity (POST /api/v1/entities)
+[✓] Update entity (PUT /api/v1/entities/{id})
+[✓] Delete entity (DELETE /api/v1/entities/{id})
+[✓] Search entities (GET /api/v1/search)
+[✓] Pagination support
+[✓] Proper HTTP status codes
+[✓] Error handling with error codes
+[✓] JSON response format (data/meta structure)
+[✓] Token management UI
+[✓] Last used tracking
+[✓] Security best practices
+
+API Endpoints:
+--------------
+Token Management UI:
+  GET    /settings/api-tokens       - List user's tokens
+  POST   /settings/api-tokens       - Create new token
+  DELETE /settings/api-tokens/{id}  - Revoke token
+
+REST API v1:
+  GET    /api/v1/entities           - List entities (requires campaign_id)
+  GET    /api/v1/entities/{id}      - Get single entity
+  POST   /api/v1/entities           - Create entity
+  PUT    /api/v1/entities/{id}      - Update entity
+  DELETE /api/v1/entities/{id}      - Delete entity
+  GET    /api/v1/search             - Search entities (requires q param)
+
+Testing Instructions:
+---------------------
+1. Run database migrations (auto in debug mode)
+2. Create user account at /register
+3. Login and navigate to Settings → API Tokens
+4. Generate a new API token
+5. Copy the token (shown only once!)
+6. Test API endpoints using curl or Postman:
+
+   curl -H "Authorization: Bearer YOUR_TOKEN" \
+        "http://localhost/api/v1/entities?campaign_id=1"
+
+All requirements from Phase 8 specification: COMPLETE ✓
