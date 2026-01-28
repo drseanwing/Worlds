@@ -15,6 +15,11 @@ use Worlds\Config\Database;
 class RelationRepository
 {
     /**
+     * Maximum number of graph nodes to prevent DoS attacks
+     */
+    private const MAX_GRAPH_NODES = 500;
+
+    /**
      * @var PDO Database connection instance
      */
     private PDO $pdo;
@@ -396,6 +401,175 @@ class RelationRepository
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return (int) $result['count'] > 0;
+    }
+
+    /**
+     * Get graph data for an entity with specified depth
+     *
+     * Returns nodes and edges for graph visualization using vis-network format.
+     * Recursively fetches related entities up to specified depth.
+     *
+     * @param int $entityId Starting entity ID
+     * @param int $depth Relationship depth (1-3)
+     * @return array Graph data with 'nodes' and 'edges' arrays
+     */
+    public function getGraphData(int $entityId, int $depth = 1): array
+    {
+        $nodes = [];
+        $edges = [];
+        $visited = [];
+
+        $this->buildGraphRecursive($entityId, $depth, 0, $nodes, $edges, $visited);
+
+        return [
+            'nodes' => array_values($nodes),
+            'edges' => $edges
+        ];
+    }
+
+    /**
+     * Get graph data for entire campaign
+     *
+     * Returns all entities and relations in the campaign as graph data.
+     *
+     * @param int $campaignId Campaign ID
+     * @return array Graph data with 'nodes' and 'edges' arrays
+     */
+    public function getCampaignGraphData(int $campaignId): array
+    {
+        // Fetch all entities in campaign
+        $stmt = $this->pdo->prepare('
+            SELECT id, name, entity_type, image_path
+            FROM entities
+            WHERE campaign_id = ?
+            ORDER BY entity_type, name
+            LIMIT ?
+        ');
+        $stmt->execute([$campaignId, self::MAX_GRAPH_NODES]);
+        $entities = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Build nodes array
+        $nodes = [];
+        foreach ($entities as $entity) {
+            $nodes[] = [
+                'id' => (int) $entity['id'],
+                'label' => $entity['name'],
+                'group' => $entity['entity_type'],
+                'image' => $entity['image_path'] ?? null
+            ];
+        }
+
+        // Fetch all relations in campaign
+        $stmt = $this->pdo->prepare('
+            SELECT DISTINCT
+                r.source_id,
+                r.target_id,
+                r.relation_type
+            FROM relations r
+            INNER JOIN entities e ON r.source_id = e.id
+            WHERE e.campaign_id = ?
+        ');
+        $stmt->execute([$campaignId]);
+        $relations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Build edges array
+        $edges = [];
+        foreach ($relations as $relation) {
+            $edges[] = [
+                'from' => (int) $relation['source_id'],
+                'to' => (int) $relation['target_id'],
+                'label' => $relation['relation_type']
+            ];
+        }
+
+        return [
+            'nodes' => $nodes,
+            'edges' => $edges
+        ];
+    }
+
+    /**
+     * Recursively build graph data structure
+     *
+     * @param int $entityId Current entity ID
+     * @param int $maxDepth Maximum depth to traverse
+     * @param int $currentDepth Current traversal depth
+     * @param array &$nodes Nodes array (by reference)
+     * @param array &$edges Edges array (by reference)
+     * @param array &$visited Visited entity IDs (by reference)
+     * @return void
+     */
+    private function buildGraphRecursive(
+        int $entityId,
+        int $maxDepth,
+        int $currentDepth,
+        array &$nodes,
+        array &$edges,
+        array &$visited
+    ): void {
+        // Prevent runaway traversal
+        if (count($nodes) >= self::MAX_GRAPH_NODES) {
+            return;
+        }
+
+        // Stop if already visited or max depth reached
+        if (isset($visited[$entityId]) || $currentDepth > $maxDepth) {
+            return;
+        }
+
+        $visited[$entityId] = true;
+
+        // Fetch entity details
+        $stmt = $this->pdo->prepare('
+            SELECT id, name, entity_type, image_path
+            FROM entities
+            WHERE id = ?
+        ');
+        $stmt->execute([$entityId]);
+        $entity = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$entity) {
+            return;
+        }
+
+        // Add node if not already present
+        if (!isset($nodes[$entityId])) {
+            $nodes[$entityId] = [
+                'id' => (int) $entity['id'],
+                'label' => $entity['name'],
+                'group' => $entity['entity_type'],
+                'image' => $entity['image_path'] ?? null
+            ];
+        }
+
+        // Stop if we've reached max depth
+        if ($currentDepth >= $maxDepth) {
+            return;
+        }
+
+        // Fetch relations from this entity
+        $relations = $this->findByEntity($entityId);
+
+        foreach ($relations as $relation) {
+            $targetId = $relation['target_id'];
+
+            // Add edge
+            $edges[] = [
+                'from' => $entityId,
+                'to' => $targetId,
+                'label' => $relation['relation_type']
+            ];
+
+            // Recursively process target entity
+            $this->buildGraphRecursive(
+                $targetId,
+                $maxDepth,
+                $currentDepth + 1,
+                $nodes,
+                $edges,
+                $visited
+            );
+        }
     }
 
     /**

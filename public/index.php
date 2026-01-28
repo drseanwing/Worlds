@@ -42,6 +42,14 @@ use Worlds\Controllers\AttributeController;
 use Worlds\Controllers\PostController;
 use Worlds\Controllers\FileController;
 use Worlds\Controllers\SearchController;
+use Worlds\Controllers\ExportController;
+use Worlds\Controllers\ImportController;
+use Worlds\Controllers\InventoryController;
+use Worlds\Controllers\AbilityAttachmentController;
+use Worlds\Controllers\ApiTokenController;
+use Worlds\Controllers\GraphController;
+use Worlds\Controllers\Api\EntitiesApiController;
+use Worlds\Controllers\Api\SearchApiController;
 
 // Load environment configuration
 Config::load();
@@ -213,6 +221,19 @@ $router->put('/api/posts/{id}', [PostController::class, 'update']);
 $router->delete('/api/posts/{id}', [PostController::class, 'destroy']);
 $router->post('/api/entities/{id}/posts/reorder', [PostController::class, 'reorder']);
 
+// Inventory routes (API endpoints)
+$router->get('/api/entities/{id}/inventory', [InventoryController::class, 'index']);
+$router->post('/api/entities/{id}/inventory', [InventoryController::class, 'store']);
+$router->put('/api/inventory/{id}', [InventoryController::class, 'update']);
+$router->delete('/api/inventory/{id}', [InventoryController::class, 'destroy']);
+$router->post('/api/entities/{id}/inventory/reorder', [InventoryController::class, 'reorder']);
+
+// Ability attachment routes (API endpoints)
+$router->get('/api/entities/{id}/abilities', [AbilityAttachmentController::class, 'index']);
+$router->post('/api/entities/{id}/abilities', [AbilityAttachmentController::class, 'store']);
+$router->put('/api/ability-attachments/{id}', [AbilityAttachmentController::class, 'update']);
+$router->delete('/api/ability-attachments/{id}', [AbilityAttachmentController::class, 'destroy']);
+
 // File routes
 $router->post('/api/entities/{id}/files', [FileController::class, 'store']);
 $router->delete('/api/files/{id}', [FileController::class, 'destroy']);
@@ -221,6 +242,36 @@ $router->get('/files/{id}/thumb', [FileController::class, 'download']);
 
 // Search route
 $router->get('/search', [SearchController::class, 'index']);
+
+// Export routes
+$router->get('/export', [ExportController::class, 'index']);
+$router->get('/export/campaign/{id}', [ExportController::class, 'campaign']);
+$router->get('/export/entity/{id}', [ExportController::class, 'entity']);
+$router->get('/export/backup', [ExportController::class, 'backup']);
+
+// Import routes
+$router->get('/import', [ImportController::class, 'showForm']);
+$router->post('/import/preview', [ImportController::class, 'preview']);
+$router->post('/import/process', [ImportController::class, 'process']);
+
+// Graph/Relation Explorer routes
+$router->get('/graph', [GraphController::class, 'showCampaign']);
+$router->get('/graph/data', [GraphController::class, 'campaignData']);
+$router->get('/entities/{type}/{id}/graph', [GraphController::class, 'show']);
+$router->get('/api/entities/{id}/graph', [GraphController::class, 'data']);
+
+// API Token management routes
+$router->get('/settings/api-tokens', [ApiTokenController::class, 'index']);
+$router->post('/settings/api-tokens', [ApiTokenController::class, 'store']);
+$router->delete('/settings/api-tokens/{id}', [ApiTokenController::class, 'destroy']);
+
+// REST API v1 endpoints (require Bearer token authentication)
+$router->get('/api/v1/entities', [EntitiesApiController::class, 'index']);
+$router->get('/api/v1/entities/{id}', [EntitiesApiController::class, 'show']);
+$router->post('/api/v1/entities', [EntitiesApiController::class, 'store']);
+$router->put('/api/v1/entities/{id}', [EntitiesApiController::class, 'update']);
+$router->delete('/api/v1/entities/{id}', [EntitiesApiController::class, 'destroy']);
+$router->get('/api/v1/search', [SearchApiController::class, 'search']);
 
 // Set custom 404 handler
 $router->setNotFoundHandler(function (Request $request) {

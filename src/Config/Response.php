@@ -225,41 +225,53 @@ class Response
 
     /**
      * Create a file download response
-     * 
-     * Sets appropriate headers for file downloads and reads file content.
-     * 
-     * @param string $filePath Path to the file
-     * @param string|null $downloadName Filename for download (defaults to original filename)
-     * @param string|null $mimeType MIME type (auto-detected if null)
+     *
+     * Sets appropriate headers for file downloads. Can accept either a file path
+     * or direct content with filename and MIME type.
+     *
+     * @param string $contentOrPath File path or content string
+     * @param string $downloadName Filename for download (required if passing content)
+     * @param string|null $mimeType MIME type (auto-detected for files, required for content)
      * @return self New Response instance
      * @throws \RuntimeException If file cannot be read
      */
-    public static function download(string $filePath, ?string $downloadName = null, ?string $mimeType = null): self
+    public static function download(string $contentOrPath, string $downloadName, ?string $mimeType = null): self
     {
-        if (!file_exists($filePath) || !is_readable($filePath)) {
-            throw new \RuntimeException("File not found or not readable");
+        // Check if first parameter is a file path
+        if (file_exists($contentOrPath) && is_file($contentOrPath)) {
+            // File path mode
+            if (!is_readable($contentOrPath)) {
+                throw new \RuntimeException("File not found or not readable");
+            }
+
+            $content = file_get_contents($contentOrPath);
+            if ($content === false) {
+                throw new \RuntimeException("Failed to read file");
+            }
+
+            // Determine MIME type
+            if ($mimeType === null) {
+                $mimeType = self::getMimeType($contentOrPath);
+            }
+        } else {
+            // Direct content mode
+            $content = $contentOrPath;
+
+            // MIME type is required for direct content
+            if ($mimeType === null) {
+                $mimeType = 'application/octet-stream';
+            }
         }
 
-        $content = file_get_contents($filePath);
-        if ($content === false) {
-            throw new \RuntimeException("Failed to read file");
-        }
-
-        // Determine filename for download and sanitize it
-        $filename = $downloadName ?? basename($filePath);
-        $filename = self::sanitizeFilename($filename);
-        
-        // Determine MIME type
-        if ($mimeType === null) {
-            $mimeType = self::getMimeType($filePath);
-        }
+        // Sanitize filename
+        $filename = self::sanitizeFilename($downloadName);
 
         $response = new self($content, 200);
         $response->setHeader('Content-Type', $mimeType);
         $response->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
         $response->setHeader('Content-Length', (string) strlen($content));
         $response->setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-        
+
         return $response;
     }
 

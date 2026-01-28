@@ -13,8 +13,10 @@ CREATE TABLE IF NOT EXISTS campaigns (
     name TEXT NOT NULL,
     description TEXT,
     settings TEXT DEFAULT '{}',
+    user_id INTEGER DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TRIGGER IF NOT EXISTS campaigns_updated_at
@@ -23,6 +25,8 @@ FOR EACH ROW
 BEGIN
     UPDATE campaigns SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
+
+CREATE INDEX IF NOT EXISTS idx_campaigns_user_id ON campaigns(user_id);
 
 -- ============================================
 -- 002: Entities table (polymorphic)
@@ -257,3 +261,69 @@ CREATE INDEX IF NOT EXISTS idx_files_entity_id ON files(entity_id);
 
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+
+-- ============================================
+-- 013: Inventory Items
+-- ============================================
+CREATE TABLE IF NOT EXISTS inventory_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    entity_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    quantity INTEGER DEFAULT 1,
+    description TEXT,
+    item_entity_id INTEGER,
+    position INTEGER DEFAULT 0,
+    is_equipped INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (entity_id) REFERENCES entities(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_entity_id) REFERENCES entities(id) ON DELETE SET NULL
+);
+
+CREATE TRIGGER IF NOT EXISTS inventory_items_updated_at
+AFTER UPDATE ON inventory_items
+FOR EACH ROW
+BEGIN
+    UPDATE inventory_items SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
+END;
+
+CREATE INDEX IF NOT EXISTS idx_inventory_items_entity_id ON inventory_items(entity_id);
+CREATE INDEX IF NOT EXISTS idx_inventory_items_item_entity_id ON inventory_items(item_entity_id);
+CREATE INDEX IF NOT EXISTS idx_inventory_items_position ON inventory_items(entity_id, position);
+
+-- ============================================
+-- 015: API Tokens table
+-- ============================================
+CREATE TABLE IF NOT EXISTS api_tokens (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    token TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    last_used_at DATETIME,
+    expires_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_api_tokens_token ON api_tokens(token);
+CREATE INDEX IF NOT EXISTS idx_api_tokens_user_id ON api_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_api_tokens_expires_at ON api_tokens(expires_at);
+
+-- ============================================
+-- 014: Entity Abilities (Junction table)
+-- ============================================
+CREATE TABLE IF NOT EXISTS entity_abilities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    entity_id INTEGER NOT NULL,
+    ability_entity_id INTEGER NOT NULL,
+    charges_used INTEGER DEFAULT 0,
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (entity_id) REFERENCES entities(id) ON DELETE CASCADE,
+    FOREIGN KEY (ability_entity_id) REFERENCES entities(id) ON DELETE CASCADE,
+    UNIQUE(entity_id, ability_entity_id)
+);
+
+-- Add index for entity_abilities
+CREATE INDEX IF NOT EXISTS idx_entity_abilities_entity_id ON entity_abilities(entity_id);
+CREATE INDEX IF NOT EXISTS idx_entity_abilities_ability_entity_id ON entity_abilities(ability_entity_id);
